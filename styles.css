@@ -750,7 +750,7 @@ a.Menu {
   align-items: center;
   gap: var(--spacing-60);
   overflow: hidden;
-  padding: var(--spacing-80) var(--page-inline) var(--spacing-0);
+  padding: var(--spacing-80) var(--page-inline) var(--spacing-24);
   background: var(--bg-variant);
 }
 
@@ -1437,7 +1437,7 @@ section.Process>.Display h2 {
 
   .Value-proportion {
     gap: var(--spacing-80);
-    padding: var(--spacing-80) var(--page-inline) var(--spacing-0);
+    padding: var(--spacing-80) var(--page-inline) var(--spacing-24);
   }
 
   .Value-Content {
