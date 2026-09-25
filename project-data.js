@@ -33,28 +33,28 @@ window.GRANDEUR_PROJECTS = {
     },
     gallery: [
       {
-        desktop: "Assets/Images/projects/tropical-residence/hero.webp",
-        mobile: "Assets/Images/projects/tropical-residence/hero-mobile.webp",
+        desktop: "assets/images/projects/tropical-residence/hero.webp",
+        mobile: "assets/images/projects/tropical-residence/hero-mobile.webp",
         alt: "Front elevation of The Tropical Residence"
       },
       {
-        desktop: "Assets/Images/projects/tropical-residence/patio.webp",
-        mobile: "Assets/Images/projects/tropical-residence/patio-mobile.webp",
+        desktop: "assets/images/projects/tropical-residence/patio.webp",
+        mobile: "assets/images/projects/tropical-residence/patio-mobile.webp",
         alt: "Covered tropical patio and outdoor living area"
       },
       {
-        desktop: "Assets/Images/projects/tropical-residence/exterior-side.webp",
-        mobile: "Assets/Images/projects/tropical-residence/exterior-side-mobile.webp",
+        desktop: "assets/images/projects/tropical-residence/exterior-side.webp",
+        mobile: "assets/images/projects/tropical-residence/exterior-side-mobile.webp",
         alt: "Timber-clad side elevation surrounded by planting"
       },
       {
-        desktop: "Assets/Images/projects/tropical-residence/courtyard.webp",
-        mobile: "Assets/Images/projects/tropical-residence/courtyard-mobile.webp",
+        desktop: "assets/images/projects/tropical-residence/courtyard.webp",
+        mobile: "assets/images/projects/tropical-residence/courtyard-mobile.webp",
         alt: "Garden courtyard and glazed living spaces"
       },
       {
-        desktop: "Assets/Images/projects/tropical-residence/garden.webp",
-        mobile: "Assets/Images/projects/tropical-residence/garden-mobile.webp",
+        desktop: "assets/images/projects/tropical-residence/garden.webp",
+        mobile: "assets/images/projects/tropical-residence/garden-mobile.webp",
         alt: "Rear garden elevation with palms"
       }
     ],
@@ -62,14 +62,14 @@ window.GRANDEUR_PROJECTS = {
       role: "Residence Owner",
       name: "Arun Karunakaran",
       quote: "“Grandeur Studio understood how we wanted our home to feel and brought that vision together beautifully. From the architecture to the interiors, every detail feels intentional, warm, and connected to the surrounding landscape. The result is a home that feels both refined and genuinely comfortable to live in.”",
-      image: "Assets/Images/projects/tropical-residence/testimonial.webp",
-      mobileImage: "Assets/Images/projects/tropical-residence/testimonial-mobile.webp",
+      image: "assets/images/projects/tropical-residence/testimonial.webp",
+      mobileImage: "assets/images/projects/tropical-residence/testimonial-mobile.webp",
       imageAlt: "Stone path beside the tropical residence"
     },
     nextProject: {
       key: "garden-residence",
       title: "The Garden Residence",
-      image: "Assets/Images/projects/garden-residence/hero.webp",
+      image: "assets/images/projects/garden-residence/hero.webp",
       imageAlt: "Garden elevation of The Garden Residence",
       available: true
     }
@@ -91,27 +91,27 @@ window.GRANDEUR_PROJECTS = {
     },
     gallery: [
       {
-        desktop: "Assets/Images/projects/garden-residence/hero.webp",
+        desktop: "assets/images/projects/garden-residence/hero.webp",
         ratio: "4096 / 2734",
         alt: "Garden-facing exterior of The Garden Residence"
       },
       {
-        desktop: "Assets/Images/projects/garden-residence/kitchen-dining.webp",
+        desktop: "assets/images/projects/garden-residence/kitchen-dining.webp",
         ratio: "4096 / 2734",
         alt: "Warm timber kitchen and dining area"
       },
       {
-        desktop: "Assets/Images/projects/garden-residence/dining-room.webp",
+        desktop: "assets/images/projects/garden-residence/dining-room.webp",
         ratio: "4096 / 2734",
         alt: "Bright family dining room"
       },
       {
-        desktop: "Assets/Images/projects/garden-residence/kitchen.webp",
+        desktop: "assets/images/projects/garden-residence/kitchen.webp",
         ratio: "4096 / 2734",
         alt: "Open kitchen and dining interior"
       },
       {
-        desktop: "Assets/Images/projects/garden-residence/living-room.webp",
+        desktop: "assets/images/projects/garden-residence/living-room.webp",
         ratio: "4096 / 2734",
         alt: "Double-height central living hall"
       }
@@ -120,7 +120,7 @@ window.GRANDEUR_PROJECTS = {
       role: "Residence Owner",
       name: "Suresh Gopi",
       quote: "“We’re truly grateful for all the thought and effort that went into creating our Garden Residence. Grandeur Design took the time to understand our ideas, lifestyle, and the way we wanted our home to feel, and brought them together in a design that feels both personal and beautifully considered. We especially appreciate how they worked with our vision rather than imposing a particular style. The result is a warm, comfortable home that feels naturally connected to the garden and truly feels like our own.”",
-      image: "Assets/Images/projects/garden-residence/testimonial.webp",
+      image: "assets/images/projects/garden-residence/testimonial.webp",
       imageAlt: "Glazed garden room surrounded by greenery",
       ratio: "665 / 961",
       crop: { left: "-63.46%", top: "-0.01%", width: "216.54%", height: "100.02%" }
@@ -128,7 +128,7 @@ window.GRANDEUR_PROJECTS = {
     nextProject: {
       key: "marble-residence",
       title: "The Marble Residence",
-      image: "Assets/Images/projects/marble-residence/hero.webp",
+      image: "assets/images/projects/marble-residence/hero.webp",
       imageAlt: "Living area in The Marble Residence",
       available: true
     }
@@ -150,29 +150,29 @@ window.GRANDEUR_PROJECTS = {
     },
     gallery: [
       {
-        desktop: "Assets/Images/projects/marble-residence/hero.webp",
+        desktop: "assets/images/projects/marble-residence/hero.webp",
         ratio: "1440 / 985",
         crop: { left: "0", top: "-11.47%", width: "100%", height: "120.49%" },
         alt: "Sculptural staircase and lounge in The Marble Residence"
       },
       {
-        desktop: "Assets/Images/projects/marble-residence/living-room.webp",
+        desktop: "assets/images/projects/marble-residence/living-room.webp",
         ratio: "1440 / 1188",
         crop: { left: "0", top: "-8%", width: "100%", height: "116.06%" },
         alt: "Marble living room and glass partition"
       },
       {
-        desktop: "Assets/Images/projects/marble-residence/dining-room.webp",
+        desktop: "assets/images/projects/marble-residence/dining-room.webp",
         ratio: "4096 / 2731",
         alt: "Minimal timber dining room"
       },
       {
-        desktop: "Assets/Images/projects/marble-residence/bedroom.webp",
+        desktop: "assets/images/projects/marble-residence/bedroom.webp",
         ratio: "4096 / 2734",
         alt: "Soft neutral bedroom"
       },
       {
-        desktop: "Assets/Images/projects/marble-residence/kitchen.webp",
+        desktop: "assets/images/projects/marble-residence/kitchen.webp",
         ratio: "4096 / 2731",
         alt: "White and marble kitchen"
       }
@@ -181,14 +181,14 @@ window.GRANDEUR_PROJECTS = {
       role: "The Residence Owner",
       name: "Arun Karunakaran",
       quote: "“We’re really happy with how our Marble Residence came together. Grandeur Design understood the clean, contemporary look we wanted while still making the home feel warm and comfortable. The choice of materials, lighting, and finishes was handled beautifully, and every space feels thoughtfully connected. They listened to our ideas throughout the process and turned them into a home that feels both elegant and very much our own.”",
-      image: "Assets/Images/projects/marble-residence/testimonial.webp",
+      image: "assets/images/projects/marble-residence/testimonial.webp",
       imageAlt: "Curved lounge chair in a softly lit bedroom",
       ratio: "2731 / 4096"
     },
     nextProject: {
       key: "earth-and-ember",
       title: "Earth & Ember",
-      image: "Assets/Images/projects/earth-and-ember/hero.webp",
+      image: "assets/images/projects/earth-and-ember/hero.webp",
       imageAlt: "Earth & Ember restaurant interior",
       available: true
     }
@@ -210,23 +210,23 @@ window.GRANDEUR_PROJECTS = {
     },
     gallery: [
       {
-        desktop: "Assets/Images/projects/earth-and-ember/hero.webp",
+        desktop: "assets/images/projects/earth-and-ember/hero.webp",
         ratio: "4096 / 2305",
         alt: "Main dining hall at Earth & Ember"
       },
       {
-        desktop: "Assets/Images/projects/earth-and-ember/dining-room.webp",
+        desktop: "assets/images/projects/earth-and-ember/dining-room.webp",
         ratio: "4032 / 3024",
         alt: "Red arched doorway and illustrated dining wall"
       },
       {
-        desktop: "Assets/Images/projects/earth-and-ember/seating.webp",
+        desktop: "assets/images/projects/earth-and-ember/seating.webp",
         ratio: "1440 / 1250",
         crop: { left: "0", top: "-72.77%", width: "100%", height: "172.78%" },
         alt: "Patterned floor and banquette seating"
       },
       {
-        desktop: "Assets/Images/projects/earth-and-ember/table.webp",
+        desktop: "assets/images/projects/earth-and-ember/table.webp",
         ratio: "660 / 464",
         crop: { left: "0", top: "-89.66%", width: "100%", height: "189.66%" },
         alt: "Colorful intimate dining table"
@@ -236,14 +236,14 @@ window.GRANDEUR_PROJECTS = {
       role: "Restaurant Owner",
       name: "Karan Deva",
       quote: "“We’re extremely happy with how Earth & Ember turned out. Grandeur Design understood the atmosphere we wanted to create and brought our ideas together in a way that feels warm, inviting, and full of character. The materials, lighting, and details all work beautifully together, and the space feels both distinctive and comfortable. They made the entire design process feel collaborative, and we’re delighted with the final result.”",
-      image: "Assets/Images/projects/earth-and-ember/testimonial.webp",
+      image: "assets/images/projects/earth-and-ember/testimonial.webp",
       imageAlt: "Warm pendant-lit dining area at Earth & Ember",
       ratio: "2731 / 4096"
     },
     nextProject: {
       key: "tropical-residence",
       title: "The Tropical Residence",
-      image: "Assets/Images/projects/tropical-residence/hero.webp",
+      image: "assets/images/projects/tropical-residence/hero.webp",
       imageAlt: "Front elevation of The Tropical Residence",
       available: true
     }

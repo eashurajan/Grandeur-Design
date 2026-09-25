@@ -1,6 +1,6 @@
 @font-face {
   font-family: "Geist";
-  src: url("../Assets/fonts/geist/Geist-VariableFont_wght.ttf") format("truetype");
+  src: url("../assets/fonts/geist/Geist-VariableFont_wght.ttf") format("truetype");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
@@ -8,7 +8,7 @@
 
 @font-face {
   font-family: "Red Hat Display";
-  src: url("../Assets/fonts/red-hat-display/RedHatDisplay-VariableFont_wght.ttf") format("truetype");
+  src: url("../assets/fonts/red-hat-display/RedHatDisplay-VariableFont_wght.ttf") format("truetype");
   font-weight: 300 900;
   font-style: normal;
   font-display: swap;
