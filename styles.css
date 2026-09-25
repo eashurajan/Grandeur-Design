@@ -313,6 +313,7 @@ address {
   flex: none;
   align-items: center;
   gap: var(--spacing-10);
+  transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .lOGO-1 {
@@ -595,6 +596,8 @@ a.Menu {
 
   .Nav--past-hero .Logo {
     display: none;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .Nav--past-hero .Menu-list {
@@ -1330,6 +1333,8 @@ section.Process>.Display h2 {
 
   .Nav--past-hero .Logo {
     display: none;
+    opacity: 0;
+    pointer-events: none;
   }
 
   .Menu-list {

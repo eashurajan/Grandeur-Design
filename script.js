@@ -148,10 +148,20 @@ const imageOverlays = [
   ...document.querySelectorAll(".Work-img"),
 ].filter(Boolean);
 
+function getPageScrollY() {
+  const smoother = window.ScrollSmoother && ScrollSmoother.get();
+
+  if (smoother && typeof smoother.scrollTop === "function") {
+    return smoother.scrollTop();
+  }
+
+  return window.scrollY || document.documentElement.scrollTop || 0;
+}
+
 /*
-  Header colour:
+  Header colour and compact mode:
   - Nav--on-image  → white text when the bar overlaps a photo
-  - Nav--past-hero → compact header (hamburger) after the first section
+  - Nav--past-hero → hide logo + inline menu as soon as the page scrolls
 */
 function updateNavOnImage() {
   const navBox = nav.getBoundingClientRect();
@@ -161,16 +171,13 @@ function updateNavOnImage() {
     return imageBox.bottom > navBox.top && imageBox.top < navBox.bottom;
   });
 
-  const firstSection = document.querySelector("main > section");
-  const isPastHero = firstSection
-    ? firstSection.getBoundingClientRect().bottom <= navBox.bottom
-    : false;
+  const isScrolled = getPageScrollY() > 12;
 
   nav.classList.toggle("Nav--on-image", isOverImage);
-  nav.classList.toggle("Nav--past-hero", isPastHero);
+  nav.classList.toggle("Nav--past-hero", isScrolled);
 
-  /* Restore the full desktop menu when scrolling back into the first section */
-  if (!isPastHero && window.innerWidth > 1024) {
+  /* Restore the full desktop menu when the page is back at the top */
+  if (!isScrolled && window.innerWidth > 1024) {
     closeMenu();
   }
 }
@@ -252,6 +259,10 @@ function setupScrollSmoother() {
     ignoreMobileResize: true,
     onUpdate: updateNavOnImage,
   });
+
+  if (window.ScrollTrigger) {
+    ScrollTrigger.addEventListener("scroll", updateNavOnImage);
+  }
 
   /* In-page anchors travel through the smoother instead of jumping */
   document.querySelectorAll('a[href^="#"]').forEach((link) => {
