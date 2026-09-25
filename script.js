@@ -307,6 +307,75 @@ pinProjectPageToTop();
 document.addEventListener("DOMContentLoaded", pinProjectPageToTop);
 
 /*
+  Home hero video: autoplay muted, then rewind just before the end
+  so the loop does not flash a black frame. Reduced-motion users get
+  a paused first frame instead.
+*/
+function setupHeroVideo() {
+  const video = document.querySelector(".Hero-visual video.Image-1-1");
+
+  if (!video) {
+    return;
+  }
+
+  if (prefersReducedMotion) {
+    video.pause();
+    video.removeAttribute("autoplay");
+    video.removeAttribute("loop");
+    return;
+  }
+
+  video.muted = true;
+  video.defaultMuted = true;
+  video.playsInline = true;
+
+  const playVideo = () => {
+    const playPromise = video.play();
+
+    if (playPromise && typeof playPromise.catch === "function") {
+      playPromise.catch(() => {});
+    }
+  };
+
+  const loopBeforeEnd = () => {
+    if (!video.duration || !Number.isFinite(video.duration)) {
+      return;
+    }
+
+    if (video.currentTime >= video.duration - 0.08) {
+      video.currentTime = 0.001;
+    }
+  };
+
+  if (typeof video.requestVideoFrameCallback === "function") {
+    const onFrame = () => {
+      loopBeforeEnd();
+      video.requestVideoFrameCallback(onFrame);
+    };
+
+    video.requestVideoFrameCallback(onFrame);
+  } else {
+    video.addEventListener("timeupdate", loopBeforeEnd);
+  }
+
+  video.addEventListener("ended", () => {
+    video.currentTime = 0.001;
+    playVideo();
+  });
+
+  video.addEventListener("canplay", playVideo);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState === "visible") {
+      playVideo();
+    }
+  });
+
+  playVideo();
+}
+
+setupHeroVideo();
+
+/*
   Home hero: pin the photo while the text scrolls over it,
   and slowly shift the image so it feels like parallax.
 */
@@ -337,19 +406,17 @@ function setupHeroFold() {
     anticipatePin: 1,
   });
 
-  /* Image travels with scroll inside the pinned frame */
+  /* Video stays centered; only the extra height travels on scroll */
+  gsap.set(image, { x: 0, xPercent: 0 });
   gsap.fromTo(
     image,
     {
-      y: () => {
-        const extra = image.offsetHeight - visual.offsetHeight;
-        return extra > 0 ? -(extra / 2) : 0;
-      },
+      y: 0,
     },
     {
       y: () => {
         const extra = image.offsetHeight - visual.offsetHeight;
-        return extra > 0 ? -extra : 0;
+        return extra > 0 ? -(extra / 2) : 0;
       },
       ease: "none",
       scrollTrigger: {

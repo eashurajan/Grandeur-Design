@@ -680,16 +680,32 @@ a.Menu {
   overflow: hidden;
 }
 
+.Hero-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: color-mix(in srgb, var(--neutral-dark) 20%, transparent);
+  pointer-events: none;
+}
+
 .Image-1-1 {
   position: absolute;
-  top: var(--spacing-0);
-  left: var(--spacing-0);
+  top: -25%;
+  left: 0;
   width: 100%;
   height: 150%;
   max-width: none;
   object-fit: cover;
   object-position: center center;
+  transform-origin: center center;
   will-change: transform;
+}
+
+video.Image-1-1 {
+  display: block;
+  background: transparent;
+  pointer-events: none;
 }
 
 .Hero-fold {
