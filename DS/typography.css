@@ -1,0 +1,117 @@
+:root,
+[data-typography-mode="desktop"] {
+  /* Font families */
+  --font-family-display: "Red Hat Display", sans-serif;
+  --font-family-body: "Geist", sans-serif;
+
+  /* Font weights */
+  --font-weight-regular: 400;
+  --font-weight-medium: 500;
+  --font-weight-semibold: 600;
+
+  /* Font sizes */
+  --font-size-48: 48px;
+  --font-size-32: 32px;
+  --font-size-24: 24px;
+  --font-size-20: 20px;
+  --font-size-18: 18px;
+  --font-size-16: 16px;
+  --font-size-14: 14px;
+
+  /* Line heights */
+  --line-height-56: 56px;
+  --line-height-48: 48px; 
+  --line-height-32: 32px;
+  --line-height-28: 28px;
+  --line-height-24: 24px;
+  --line-height-20: 20px;
+}
+
+[data-typography-mode="tablet"],
+[data-typography-mode="mobile"] {
+  --font-size-48: 42px;
+  --font-size-32: 28px;
+  --line-height-56: 48px;
+  --line-height-48: 36px;
+}
+
+.type-display-large {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-48);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-56);
+}
+
+.type-heading {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-32);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-48);
+}
+
+.type-heading-small {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-24);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-32);
+}
+
+.type-title-large {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-20);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-28);
+}
+
+.type-title-medium {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-18);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-28);
+}
+
+.type-title-small {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-medium);
+  line-height: var(--line-height-24);
+}
+
+.type-title-small-prominent {
+  font-family: var(--font-family-display);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-24);
+}
+
+.type-body,
+.type-anchor-large,
+.type-paragraph {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-24);
+}
+
+.type-anchor-large-prominent,
+.type-button {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-16);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-24);
+}
+
+.type-anchor-small,
+.type-caption {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-regular);
+  line-height: var(--line-height-20);
+}
+
+.type-anchor-small-prominent {
+  font-family: var(--font-family-body);
+  font-size: var(--font-size-14);
+  font-weight: var(--font-weight-semibold);
+  line-height: var(--line-height-20);
+}

@@ -1,0 +1,227 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Project details by Grandeur Designs.">
+  <title>Project - Grandeur Designs</title>
+  <link rel="stylesheet" href="DS/Font.css">
+  <link rel="stylesheet" href="DS/colors.css">
+  <link rel="stylesheet" href="DS/spacing.css">
+  <link rel="stylesheet" href="DS/stroke.css">
+  <link rel="stylesheet" href="DS/radius.css">
+  <link rel="stylesheet" href="DS/typography.css">
+  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="project.css">
+</head>
+
+<body>
+  <header class="Nav">
+    <a class="Logo" href="index.html" aria-label="Grandeur Designs home">
+      <img class="lOGO-1" src="assets/logos/mark.svg" alt="">
+      <img class="logo-text logo-text--dark" src="assets/logos/wordmark.svg" alt="Grandeur Designs">
+      <img class="logo-text logo-text--light" src="assets/logos/wordmark-light.svg" alt="" aria-hidden="true">
+    </a>
+
+    <nav class="Menu-list" id="site-nav" aria-label="Primary navigation">
+      <a class="Menu type-anchor-large" href="index.html"><span class="Menu-label">Home</span></a>
+      <a class="Menu type-anchor-large" href="about.html"><span class="Menu-label">About</span></a>
+      <div class="Menu Menu--active">
+        <span class="Menu-label type-anchor-large-prominent" tabindex="0">Works</span>
+        <div class="Options">
+          <a class="Dropdown type-anchor-large" href="works.html?type=architectural#architectural">Architectural</a>
+          <a class="Dropdown type-anchor-large" href="works.html?type=residential#residential">Residential</a>
+          <a class="Dropdown type-anchor-large" href="works.html?type=commercial#commercial">Commercial</a>
+        </div>
+      </div>
+      <a class="Menu type-anchor-large" href="service.html"><span class="Menu-label">Service</span></a>
+    </nav>
+
+    <div class="Nav-actions">
+      <a class="Button Button--primary Enquiry type-button" href="#enquiry">Enquiry Now</a>
+      <button class="Menu-Button" type="button" aria-expanded="false" aria-controls="site-nav"
+        aria-label="Open menu">
+        <img class="Icons Icons--menu" src="assets/icons/ui/menu.svg" alt="" aria-hidden="true">
+        <img class="Icons Icons--cancel" src="assets/icons/ui/cancel.svg" alt="" aria-hidden="true">
+      </button>
+    </div>
+  </header>
+
+  <div id="smooth-wrapper">
+    <div id="smooth-content">
+      <main class="Project-page">
+        <section class="Project-intro" aria-labelledby="project-title">
+          <div class="Project-intro-wrap">
+            <a class="Project-back" href="works.html?type=architectural" data-project-back
+              aria-label="Back to architectural works">
+              <img class="Icons" src="assets/icons/arrows/left-active.svg" alt="" aria-hidden="true">
+            </a>
+
+            <div class="Project-copy">
+              <div class="Project-heading">
+                <p class="type-title-small" data-project-eyebrow>A Contemporary Tropical Home</p>
+                <h1 class="type-display-large" id="project-title" data-project-title>The Tropical Residence</h1>
+              </div>
+              <div class="Project-description type-paragraph" data-project-description>
+                <p>Rooted in nature, the house brings together warm materiality, open volumes, and contemporary
+                  architectural lines to create a calm tropical retreat.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="Project-details" data-project-details aria-label="Project facts"></div>
+        </section>
+
+        <section class="Project-gallery" aria-label="Project gallery">
+          <div class="Project-gallery-images" data-project-gallery></div>
+
+          <div class="Project-testimonial">
+            <picture class="Project-testimonial-image" data-testimonial-image>
+              <source media="(max-width: 600px)" srcset="">
+              <img src="" alt="">
+            </picture>
+            <div class="Project-testimonial-block">
+              <div class="Project-testimonial-content">
+                <div class="Project-testimonial-title">
+                  <p class="type-caption" data-testimonial-role>The Residence Owner</p>
+                  <h2 class="type-heading" data-testimonial-name>Arun Karunakaran</h2>
+                </div>
+                <blockquote class="type-paragraph" data-testimonial-quote></blockquote>
+                <a class="Button Button--primary type-button Enquiry" href="#enquiry">
+                  Start your project
+                  <span class="Icons" aria-hidden="true">
+                    <svg class="Icon-go-white" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path d="M17.8855 16.8872L18.9942 6.33872L8.44568 5.23003M18.9942 6.33872L5.00555 17.6665"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <svg class="Icon-go-white" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path d="M17.8855 16.8872L18.9942 6.33872L8.44568 5.23003M18.9942 6.33872L5.00555 17.6665"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="Next-project" aria-labelledby="next-project-title">
+          <div class="Next-project-heading">
+            <h2 class="type-heading" id="next-project-title" data-next-project-title>The Heritage Residence</h2>
+            <a class="Button Button--text type-button" href="works.html?type=residential" data-next-project-link>
+              <span class="Button-label">View This Project</span>
+              <span class="Icons" aria-hidden="true">
+                <svg class="Icon-go-black" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.8855 16.8872L18.9942 6.33872L8.44568 5.23003M18.9942 6.33872L5.00555 17.6665"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+                <svg class="Icon-go-black" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                  xmlns="http://www.w3.org/2000/svg">
+                  <path d="M17.8855 16.8872L18.9942 6.33872L8.44568 5.23003M18.9942 6.33872L5.00555 17.6665"
+                    stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                </svg>
+              </span>
+            </a>
+          </div>
+          <a class="Next-project-image-link" href="works.html?type=residential" data-next-project-link
+            aria-label="View the next project">
+            <img class="Next-project-image" src="" alt="" data-next-project-image>
+          </a>
+        </section>
+      </main>
+
+      <footer class="Footer" id="contact">
+        <div class="Footer-content-wrap">
+          <a class="Logo Logo--footer" href="index.html" aria-label="Grandeur Designs home">
+            <img class="lOGO-1" src="assets/logos/mark.svg" alt="">
+            <img class="logo-text logo-text--dark" src="assets/logos/wordmark.svg" alt="Grandeur Designs">
+          </a>
+
+          <div class="Links-wrap">
+            <div class="Explore">
+              <div class="Title-Small-Prominent">
+                <h2 class="type-title-small-prominent">Explore</h2>
+              </div>
+              <div class="Links">
+                <a class="Link type-anchor-large" href="index.html">Home</a>
+                <a class="Link type-anchor-large" href="works.html">Works</a>
+                <a class="Link type-anchor-large" href="service.html">Service</a>
+                <a class="Link type-anchor-large" href="about.html">About</a>
+              </div>
+            </div>
+            <div class="Legal">
+              <div class="Title-Small-Prominent">
+                <h2 class="type-title-small-prominent">Legal</h2>
+              </div>
+              <div class="Links">
+                <a class="Link type-anchor-large" href="#">Terms of Service</a>
+                <a class="Link type-anchor-large" href="#">Privacy Policy</a>
+              </div>
+            </div>
+            <address class="Info">
+              <div class="Title-Small-Prominent">
+                <h2 class="type-title-small-prominent">Info</h2>
+              </div>
+              <div class="Links">
+                <div class="Link Anchor-Large type-anchor-large">
+                  <p>A:</p>
+                  <p>Mecricar Rd, R.S. Puram, Coimbatore, Tamil Nadu 641002</p>
+                </div>
+                <div class="Link Anchor-Large type-anchor-large">
+                  <p>P:</p>
+                  <p><a href="tel:+919988757665">+ 91 9988757665</a></p>
+                </div>
+                <div class="Link Anchor-Large type-anchor-large">
+                  <p>E:</p>
+                  <p><a href="mailto:design@grandeur.com">design@grandeur.com</a></p>
+                </div>
+              </div>
+            </address>
+          </div>
+
+          <a class="Button Button--primary Enquiry type-button" href="#enquiry">
+            Start Your Project
+            <span class="Icons" aria-hidden="true">
+              <svg class="Icon-go-white" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.8855 16.8872L18.9942 6.33872L8.44568 5.23003M18.9942 6.33872L5.00555 17.6665"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <svg class="Icon-go-white" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.8855 16.8872L18.9942 6.33872L8.44568 5.23003M18.9942 6.33872L5.00555 17.6665"
+                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+            </span>
+          </a>
+        </div>
+
+        <div class="Footer-bottom">
+          <div class="Copyrights">
+            <p class="Caption type-caption">©2025, Grandeurdesign</p>
+          </div>
+          <nav class="Social-links" aria-label="Social links">
+            <a class="Caption type-anchor-small" href="#">Instagram</a>
+            <a class="Caption type-anchor-small" href="#">Youtube</a>
+            <a class="Caption type-anchor-small" href="#">Facebook</a>
+            <a class="Caption type-anchor-small" href="#">Linkedin</a>
+            <a class="Caption type-anchor-small" href="#">X</a>
+          </nav>
+        </div>
+      </footer>
+    </div>
+  </div>
+
+  <script src="project-data.js"></script>
+  <script src="project.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.13.0/dist/ScrollSmoother.min.js"></script>
+  <script src="script.js"></script>
+</body>
+
+</html>
