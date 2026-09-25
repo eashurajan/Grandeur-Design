@@ -2820,6 +2820,35 @@ section.Process>.Display h2 {
 
 @media (max-width: 600px) {
   .Overlay {
-    padding: var(--spacing-100) var(--spacing-24) var(--spacing-48);
+    padding: var(--spacing-24);
+    padding-top: max(var(--spacing-24), env(safe-area-inset-top, 0px));
+    padding-bottom: max(var(--spacing-24), env(safe-area-inset-bottom, 0px));
+  }
+
+  .Cancel-button {
+    top: max(var(--spacing-24), env(safe-area-inset-top, 0px));
+    right: var(--spacing-24);
+  }
+
+  .Enquiry-Content {
+    gap: var(--spacing-24);
+    overflow: hidden;
+  }
+
+  .Stepper {
+    width: calc(100% - 48px - var(--spacing-24));
+    min-height: 48px;
+  }
+
+  .Enquiry-Form {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: auto;
+    gap: var(--spacing-24);
+  }
+
+  .Enquiry-Whatsapp {
+    flex: none;
+    gap: var(--spacing-24);
   }
 }
