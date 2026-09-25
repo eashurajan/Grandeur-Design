@@ -772,10 +772,33 @@ a.Menu {
   margin-top: var(--spacing-12);
 }
 
+.Buildingplan {
+  position: relative;
+  display: flex;
+  width: calc(100% + 2 * var(--page-inline));
+  flex: none;
+  justify-content: center;
+  align-items: flex-end;
+  margin-right: calc(-1 * var(--page-inline));
+  margin-left: calc(-1 * var(--page-inline));
+}
+
 .Buildingplan-vector {
-  width: 1440px;
-  height: 128px;
+  display: block;
+  flex: none;
   max-width: none;
+}
+
+.Buildingplan-baseline {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: var(--stroke-2);
+  background: var(--stroke-light-variant);
+  pointer-events: none;
 }
 
 /* Featured works */
