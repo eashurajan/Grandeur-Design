@@ -1084,7 +1084,7 @@ function setupMenuOverlay() {
 
   overlay.innerHTML = `
     <button class="Menu-Button" type="button" aria-label="Close menu">
-      <img class="Icons" src="assets/icons/ui/cancel.svg" alt="" aria-hidden="true">
+      <img class="Icons" src="Assets/Icons/ui/cancel.svg" alt="" aria-hidden="true">
     </button>
     <div class="Menu-overlay-body">
       <nav class="Menu-overlay-list" aria-label="Site menu"></nav>
@@ -1319,7 +1319,7 @@ function setupEnquiryOverlay() {
 
   overlay.innerHTML = `
     <button class="Cancel-button Component-1" type="button" aria-label="Close enquiry">
-      <img class="Icons" src="assets/icons/ui/cancel.svg" alt="" aria-hidden="true">
+      <img class="Icons" src="Assets/Icons/ui/cancel.svg" alt="" aria-hidden="true">
     </button>
     <div class="Enquiry-Content">
       <div class="Stepper is-step-1" aria-hidden="true">
@@ -1399,7 +1399,7 @@ function setupEnquiryOverlay() {
           <span class="Enquiry-or-line"></span>
         </div>
         <a class="Button Button--primary Enquiry-Whatsapp-button type-button" href="https://wa.me/919677746629?text=Hi%2C%20I%E2%80%99d%20like%20to%20know%20more%20about%20your%20interior%20design%20services%20and%20discuss%20my%20project." target="_blank" rel="noopener noreferrer">
-          <img class="Enquiry-Whatsapp-icon" src="assets/icons/social/whatsapp.svg" alt="" width="24" height="24" aria-hidden="true">
+          <img class="Enquiry-Whatsapp-icon" src="Assets/Icons/social/whatsapp.svg" alt="" width="24" height="24" aria-hidden="true">
           Whatsapp Us
         </a>
       </div>
