@@ -211,8 +211,7 @@ address {
 
   :is(.Button--primary, .Button--variant, .Button--text) .Icons svg,
   .Button--text .Button-label::after,
-  .Nav-page-title,
-  .Works-container .Title-Large {
+  .Works-container {
     transition: none;
   }
 }
@@ -544,10 +543,6 @@ a.Menu {
   flex: none;
   align-items: center;
   gap: var(--spacing-16);
-}
-
-.Nav-page-title {
-  display: none;
 }
 
 /* After the hero, desktop hides the inline menu and shows the hamburger instead */
@@ -1382,31 +1377,21 @@ section.Process>.Display h2 {
     pointer-events: none;
   }
 
-  .Nav-page-title {
-    display: block;
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: calc(48px + var(--spacing-16));
-    transform: translateY(-50%);
+  .Nav > .is-docked-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    margin: var(--spacing-0) var(--spacing-16) var(--spacing-0) var(--spacing-0);
     color: var(--text-dark);
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
-    transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
-      visibility 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+    text-align: left;
   }
 
-  .Nav--past-hero .Nav-page-title {
-    opacity: 1;
-    visibility: visible;
-  }
-
-  .Nav--past-hero:has(.Nav-page-title) {
+  .Nav--past-hero:has(> .is-docked-title) {
+    justify-content: space-between;
     background: var(--bg-variant);
   }
 
-  .Nav--on-image .Nav-page-title {
+  .Nav--on-image > .is-docked-title {
     color: var(--text-dark);
   }
 
@@ -1622,6 +1607,10 @@ section.Process>.Display h2 {
   .Nav {
     padding-right: var(--spacing-16);
     padding-left: var(--spacing-16);
+  }
+
+  .Nav > .is-docked-title {
+    margin-left: calc(var(--page-inline) - var(--spacing-16));
   }
 
   .Menu-list {
@@ -2028,7 +2017,14 @@ section.Process>.Display h2 {
 .Works-container .Title-Large {
   width: 100%;
   padding: var(--spacing-0) var(--page-inline);
+  overflow: hidden;
   text-align: center;
+}
+
+.Works-container .Title-Large .type-title-large {
+  width: fit-content;
+  max-width: 100%;
+  margin-inline: auto;
 }
 
 .Work-Tracker-Container {
@@ -2097,12 +2093,22 @@ section.Process>.Display h2 {
     height: 100vh;
     min-height: 100vh;
     padding: var(--spacing-120) var(--spacing-0) var(--spacing-0);
+    transition: padding-top 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .Works-container.is-title-docked {
+    padding-top: 108px;
   }
 
   .Works-section {
     flex: 1 1 auto;
     min-height: 0;
     overflow: hidden;
+    transition: gap 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .Works-container.is-title-docked .Works-section {
+    gap: var(--spacing-0);
   }
 
   .Works-container .Title-Large {
@@ -2111,11 +2117,6 @@ section.Process>.Display h2 {
     z-index: 2;
     flex: none;
     background: var(--bg-variant);
-    transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  .Nav--past-hero ~ #smooth-wrapper .Works-container .Title-Large {
-    opacity: 0;
   }
 
   .Work-Tracker-Container {
@@ -2142,11 +2143,15 @@ section.Process>.Display h2 {
     padding: var(--spacing-120) var(--page-inline) var(--spacing-24);
   }
 
+  .Works-container.is-title-docked {
+    padding-top: 108px;
+  }
+
   .Works-container .Title-Large {
     padding-right: var(--spacing-0);
     padding-left: var(--spacing-0);
   }
-
+ 
   .Work-Tracker-Container {
     padding: var(--spacing-0);
   }

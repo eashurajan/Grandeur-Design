@@ -165,6 +165,7 @@ function getPageScrollY() {
   The Works page keeps the full desktop nav while scrolling.
 */
 const keepFullNavOnDesktop = Boolean(document.querySelector(".Works-container"));
+let syncWorksTitleDock = () => {};
 
 function updateNavOnImage() {
   const navBox = nav.getBoundingClientRect();
@@ -175,11 +176,23 @@ function updateNavOnImage() {
   });
 
   const isDesktop = window.innerWidth > 1024;
-  const isScrolled = getPageScrollY() > 12;
-  const collapseOnScroll = isScrolled && !(keepFullNavOnDesktop && isDesktop);
+  const scrollY = getPageScrollY();
+  const keepFull = keepFullNavOnDesktop && isDesktop;
+  const isScrolled = scrollY > 12;
+  const collapseOnScroll = isScrolled && !keepFull;
 
   nav.classList.toggle("Nav--on-image", isOverImage);
   nav.classList.toggle("Nav--past-hero", collapseOnScroll);
+
+  /* Dock and undock at different scroll points so collapsing the title
+     cannot immediately reverse itself and loop the animation. */
+  if (keepFull) {
+    syncWorksTitleDock(false);
+  } else if (scrollY > 36) {
+    syncWorksTitleDock(true);
+  } else if (scrollY < 8) {
+    syncWorksTitleDock(false);
+  }
 
   /* Restore the full desktop menu when the page is back at the top */
   if (!collapseOnScroll && isDesktop) {
@@ -1979,11 +1992,97 @@ function setupWorksCategory() {
     section.hidden = !isActive;
     section.setAttribute("aria-hidden", String(!isActive));
   });
-  const pageTitle = `${WORK_CATEGORIES[type]} Works`;
-  document.title = `${pageTitle} - Grandeur Designs`;
-  document.querySelectorAll("[data-works-title]").forEach((title) => {
-    title.textContent = pageTitle;
-  });
+  document.title = `${WORK_CATEGORIES[type]} Works - Grandeur Designs`;
+}
+
+/*
+  Works page: the category title stays in the gallery at rest.
+  After the page scrolls, it moves into the header beside the menu.
+*/
+function setupWorksTitleDock() {
+  const works = document.querySelector(".Works-container");
+  const navActions = nav.querySelector(".Nav-actions");
+  const titleWrap = works?.querySelector(".Works-section:not([hidden]) .Title-Large");
+  const heading = titleWrap?.querySelector(".type-title-large");
+
+  if (!works || !navActions || !titleWrap || !heading || !window.gsap) {
+    return;
+  }
+
+  const duration = 0.45;
+  let docked = false;
+  let isAnimating = false;
+  let headingTween;
+  let wrapTween;
+
+  function dockTitle(next) {
+    if (isAnimating || next === docked) {
+      return;
+    }
+
+    const first = heading.getBoundingClientRect();
+    const wrapHeight = titleWrap.offsetHeight;
+
+    if (headingTween) {
+      headingTween.kill();
+    }
+
+    if (wrapTween) {
+      wrapTween.kill();
+    }
+
+    isAnimating = true;
+    docked = next;
+    works.classList.toggle("is-title-docked", next);
+    heading.classList.toggle("is-docked-title", next);
+
+    if (next) {
+      gsap.set(titleWrap, { height: wrapHeight });
+      nav.insertBefore(heading, navActions);
+    } else {
+      titleWrap.appendChild(heading);
+    }
+
+    const instant = prefersReducedMotion;
+    let openHeight = wrapHeight;
+    let last = heading.getBoundingClientRect();
+
+    if (!next) {
+      gsap.set(titleWrap, { height: "auto", overflow: "visible" });
+      openHeight = titleWrap.offsetHeight;
+      last = heading.getBoundingClientRect();
+      gsap.set(titleWrap, { height: 0 });
+    }
+
+    headingTween = gsap.fromTo(
+      heading,
+      { x: first.left - last.left, y: first.top - last.top },
+      {
+        x: 0,
+        y: 0,
+        duration: instant ? 0 : duration,
+        ease: "power2.out",
+        overwrite: true,
+        clearProps: "transform",
+      }
+    );
+
+    wrapTween = gsap.to(titleWrap, {
+      height: next ? 0 : openHeight,
+      duration: instant ? 0 : duration,
+      ease: "power2.out",
+      overwrite: true,
+      onComplete: () => {
+        if (!next) {
+          gsap.set(titleWrap, { clearProps: "height,overflow" });
+        }
+
+        isAnimating = false;
+      },
+    });
+  }
+
+  syncWorksTitleDock = dockTitle;
 }
 
 /* Works page: the selected gallery pins and scrolls like the team tracker. */
@@ -1996,6 +2095,7 @@ function setupWorkTracker() {
 
 /* Start page-specific features. Each function no-ops if its HTML is missing. */
 setupWorksCategory();
+setupWorksTitleDock();
 setupMenuOverlay();
 setupEnquiryOverlay();
 setupWorkTracker();
