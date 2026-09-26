@@ -162,7 +162,10 @@ function getPageScrollY() {
   Header colour and compact mode:
   - Nav--on-image  → white text when the bar overlaps a photo
   - Nav--past-hero → hide logo + inline menu as soon as the page scrolls
+  The Works page keeps the full desktop nav while scrolling.
 */
+const keepFullNavOnDesktop = Boolean(document.querySelector(".Works-container"));
+
 function updateNavOnImage() {
   const navBox = nav.getBoundingClientRect();
 
@@ -171,13 +174,15 @@ function updateNavOnImage() {
     return imageBox.bottom > navBox.top && imageBox.top < navBox.bottom;
   });
 
+  const isDesktop = window.innerWidth > 1024;
   const isScrolled = getPageScrollY() > 12;
+  const collapseOnScroll = isScrolled && !(keepFullNavOnDesktop && isDesktop);
 
   nav.classList.toggle("Nav--on-image", isOverImage);
-  nav.classList.toggle("Nav--past-hero", isScrolled);
+  nav.classList.toggle("Nav--past-hero", collapseOnScroll);
 
   /* Restore the full desktop menu when the page is back at the top */
-  if (!isScrolled && window.innerWidth > 1024) {
+  if (!collapseOnScroll && isDesktop) {
     closeMenu();
   }
 }
@@ -1974,7 +1979,11 @@ function setupWorksCategory() {
     section.hidden = !isActive;
     section.setAttribute("aria-hidden", String(!isActive));
   });
-  document.title = `${WORK_CATEGORIES[type]} Works - Grandeur Designs`;
+  const pageTitle = `${WORK_CATEGORIES[type]} Works`;
+  document.title = `${pageTitle} - Grandeur Designs`;
+  document.querySelectorAll("[data-works-title]").forEach((title) => {
+    title.textContent = pageTitle;
+  });
 }
 
 /* Works page: the selected gallery pins and scrolls like the team tracker. */

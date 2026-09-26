@@ -210,7 +210,9 @@ address {
 @media (prefers-reduced-motion: reduce) {
 
   :is(.Button--primary, .Button--variant, .Button--text) .Icons svg,
-  .Button--text .Button-label::after {
+  .Button--text .Button-label::after,
+  .Nav-page-title,
+  .Works-container .Title-Large {
     transition: none;
   }
 }
@@ -542,6 +544,10 @@ a.Menu {
   flex: none;
   align-items: center;
   gap: var(--spacing-16);
+}
+
+.Nav-page-title {
+  display: none;
 }
 
 /* After the hero, desktop hides the inline menu and shows the hamburger instead */
@@ -1376,6 +1382,34 @@ section.Process>.Display h2 {
     pointer-events: none;
   }
 
+  .Nav-page-title {
+    display: block;
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: calc(48px + var(--spacing-16));
+    transform: translateY(-50%);
+    color: var(--text-dark);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+      visibility 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .Nav--past-hero .Nav-page-title {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .Nav--past-hero:has(.Nav-page-title) {
+    background: var(--bg-variant);
+  }
+
+  .Nav--on-image .Nav-page-title {
+    color: var(--text-dark);
+  }
+
   .Menu-list {
     position: absolute;
     top: 108px;
@@ -1933,7 +1967,7 @@ section.Process>.Display h2 {
 
 @media (max-width: 600px) {
   .About-header-content {
-    padding: var(--spacing-200) var(--page-inline) var(--spacing-140);
+    padding: var(--spacing-160) var(--page-inline) var(--spacing-100);
   }
 
   .A-Rightcontent-wrap .Para {
@@ -2077,6 +2111,11 @@ section.Process>.Display h2 {
     z-index: 2;
     flex: none;
     background: var(--bg-variant);
+    transition: opacity 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .Nav--past-hero ~ #smooth-wrapper .Works-container .Title-Large {
+    opacity: 0;
   }
 
   .Work-Tracker-Container {
