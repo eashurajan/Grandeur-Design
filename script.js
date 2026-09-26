@@ -734,9 +734,14 @@ function setupTestimonials() {
 
   const clampIndex = gsap.utils.clamp(0, slides.length - 1);
   const formatIndex = (value) => String(value).padStart(2, "0");
+  const slideDuration = 30;
+  const progressBars = slides.map((slide) =>
+    slide.querySelector("[data-testimonial-progress]")
+  );
   let index = 0;
   let minX = 0;
   let transition;
+  let progressTween;
   let isAnimating = false;
   let dragging = false;
   let dragStartX = 0;
@@ -782,13 +787,94 @@ function setupTestimonials() {
     });
   }
 
+  function isAutoplayViewport() {
+    return window.innerWidth <= 1024;
+  }
+
+  function wrapIndex(value) {
+    return ((value % slides.length) + slides.length) % slides.length;
+  }
+
+  function stopAutoplay() {
+    if (progressTween) {
+      progressTween.kill();
+      progressTween = null;
+    }
+  }
+
+  function syncProgress(progress) {
+    progressBars.forEach((bar) => {
+      if (!bar) {
+        return;
+      }
+
+      [...bar.querySelectorAll(".Testimonial-progress-segment")].forEach(
+        (segment, segmentIndex) => {
+          const fill = segment.querySelector(".Testimonial-progress-fill");
+
+          segment.classList.toggle("is-complete", segmentIndex < index);
+          segment.classList.toggle("is-active", segmentIndex === index);
+
+          if (!fill) {
+            return;
+          }
+
+          if (segmentIndex < index) {
+            gsap.set(fill, { scaleX: 1 });
+          } else if (segmentIndex === index) {
+            gsap.set(fill, { scaleX: progress });
+          } else {
+            gsap.set(fill, { scaleX: 0 });
+          }
+        }
+      );
+    });
+  }
+
+  function startAutoplay() {
+    stopAutoplay();
+
+    if (
+      !isAutoplayViewport() ||
+      prefersReducedMotion ||
+      document.hidden ||
+      dragging
+    ) {
+      syncProgress(0);
+      return;
+    }
+
+    syncProgress(0);
+
+    const fills = progressBars
+      .map((bar) =>
+        bar?.querySelector(".Testimonial-progress-segment.is-active .Testimonial-progress-fill")
+      )
+      .filter(Boolean);
+
+    if (!fills.length) {
+      return;
+    }
+
+    progressTween = gsap.to(fills, {
+      scaleX: 1,
+      duration: slideDuration,
+      ease: "none",
+      overwrite: true,
+      onComplete: () => {
+        progressTween = null;
+        goTo(index + 1, { wrap: true });
+      },
+    });
+  }
+
   /* Disable prev/next at the ends, update 01/04, hide other slides from keyboard. */
   function updateControls() {
     const atStart = index === 0;
     const atEnd = index === slides.length - 1;
 
-    prev.disabled = atStart;
-    next.disabled = atEnd;
+    prev.disabled = atStart && !isAutoplayViewport();
+    next.disabled = atEnd && !isAutoplayViewport();
     currentLabel.textContent = formatIndex(index + 1);
 
     slides.forEach((slide, slideIndex) => {
@@ -811,12 +897,14 @@ function setupTestimonials() {
   }
 
   /* Animate to a slide index. Instant skip is used on first layout / resize. */
-  function goTo(nextIndex, { instant = false } = {}) {
-    const targetIndex = clampIndex(nextIndex);
+  function goTo(nextIndex, { instant = false, wrap = false } = {}) {
+    const targetIndex = wrap ? wrapIndex(nextIndex) : clampIndex(nextIndex);
 
     if (isAnimating && !instant) {
       return;
     }
+
+    stopAutoplay();
 
     const previousIndex = index;
     const incoming = slides[targetIndex];
@@ -833,6 +921,7 @@ function setupTestimonials() {
       targetIndex === index &&
       Math.abs(trackX() - destination) < 1
     ) {
+      startAutoplay();
       return;
     }
 
@@ -848,6 +937,7 @@ function setupTestimonials() {
       gsap.set(contents, { autoAlpha: 1 });
       isAnimating = false;
       updateControls();
+      startAutoplay();
       return;
     }
 
@@ -864,6 +954,7 @@ function setupTestimonials() {
         transition = null;
         isAnimating = false;
         updateControls();
+        startAutoplay();
       },
     });
 
@@ -946,25 +1037,25 @@ function setupTestimonials() {
 
   prev.addEventListener("click", () => {
     if (!isAnimating) {
-      goTo(index - 1);
+      goTo(index - 1, { wrap: isAutoplayViewport() });
     }
   });
 
   next.addEventListener("click", () => {
     if (!isAnimating) {
-      goTo(index + 1);
+      goTo(index + 1, { wrap: isAutoplayViewport() });
     }
   });
 
   tracker.addEventListener("keydown", (event) => {
     if (event.key === "ArrowLeft") {
       event.preventDefault();
-      goTo(index - 1);
+      goTo(index - 1, { wrap: isAutoplayViewport() });
     }
 
     if (event.key === "ArrowRight") {
       event.preventDefault();
-      goTo(index + 1);
+      goTo(index + 1, { wrap: isAutoplayViewport() });
     }
   });
 
@@ -1012,6 +1103,7 @@ function setupTestimonials() {
       if (dragAxis === "x") {
         dragging = true;
         didDrag = true;
+        stopAutoplay();
         tracker.classList.add("is-dragging");
         tracker.setPointerCapture(pointerId);
       }
@@ -1086,11 +1178,22 @@ function setupTestimonials() {
     gsap.set(slides, { clearProps: "opacity,visibility" });
     gsap.set(contents, { autoAlpha: 1 });
     updateControls();
+    startAutoplay();
+  });
+
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) {
+      stopAutoplay();
+      return;
+    }
+
+    startAutoplay();
   });
 
   resizeObserver.observe(tracker);
   layout();
   updateControls();
+  startAutoplay();
 }
 
 setupTestimonials();

@@ -1143,6 +1143,32 @@ video.Image-1-1 {
   color: var(--text-dark-sub);
 }
 
+.Testimonial-progress {
+  display: none;
+  width: 100%;
+  align-items: center;
+  gap: var(--spacing-10);
+  padding-top: var(--spacing-8);
+}
+
+.Testimonial-progress-segment {
+  display: block;
+  flex: 1 1 0;
+  min-width: 1px;
+  height: var(--stroke-3);
+  overflow: hidden;
+  background: var(--bg-light);
+}
+
+.Testimonial-progress-fill {
+  display: block;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-dark);
+  transform: scaleX(0);
+  transform-origin: left center;
+}
+
 /* Process */
 
 section.Process {
@@ -1539,6 +1565,10 @@ section.Process>.Display h2 {
     padding: var(--spacing-80) var(--page-inline);
   }
 
+  .Testimonial-progress {
+    display: flex;
+  }
+
   .Testimonial_track {
     gap: var(--spacing-80);
   }
@@ -1546,6 +1576,7 @@ section.Process>.Display h2 {
   .Testimonial {
     flex-wrap: wrap;
     gap: var(--spacing-32);
+    overflow: visible;
   }
 
   .Testimonial-img {
@@ -1556,6 +1587,9 @@ section.Process>.Display h2 {
   .Testimonial-content {
     width: 100%;
     height: auto;
+    min-height: 0;
+    min-width: 0;
+    flex: none;
     justify-content: flex-start;
     gap: var(--spacing-36);
   }
@@ -1723,7 +1757,7 @@ section.Process>.Display h2 {
   }
 
   .Arrow-button-container {
-    gap: var(--spacing-24);
+    display: none;
   }
 
   .Testimonial_track {
@@ -1731,7 +1765,10 @@ section.Process>.Display h2 {
   }
 
   .Testimonial {
-    gap: var(--spacing-16);
+    flex-direction: column;
+    flex-wrap: nowrap;
+    overflow: visible;
+    gap: var(--spacing-4);
   }
 
   .Testimonial-img {
@@ -1740,8 +1777,18 @@ section.Process>.Display h2 {
   }
 
   .Testimonial-content {
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    min-width: 0;
+    flex: none;
     gap: var(--spacing-24);
     padding: var(--spacing-24) var(--spacing-0);
+  }
+
+  .Testimonial-content .Button--text .Button-label::after {
+    background-position: left;
+    background-size: 100% 100%;
   }
 
   section.Process {
