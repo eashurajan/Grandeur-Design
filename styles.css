@@ -2598,6 +2598,12 @@ section.Process>.Display h2 {
   display: none;
 }
 
+@media (max-width: 1024px) {
+  .Menu-overlay .Enquiry {
+    display: inline-flex;
+  }
+}
+
 .Menu-overlay .Anchor-Large {
   display: flex;
   width: 100%;
@@ -2657,10 +2663,6 @@ section.Process>.Display h2 {
   .Menu-overlay .Dropdown {
     justify-content: flex-start;
     text-align: start;
-  }
-
-  .Menu-overlay .Enquiry {
-    display: inline-flex;
   }
 
   .Menu-overlay .Links {

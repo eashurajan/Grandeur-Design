@@ -449,7 +449,9 @@ setupHeroFold();
 
 /*
   Fade/slide headings, paragraphs, and buttons in when they enter the screen.
-  Accordions and testimonials are skipped so their own animation stays in control.
+  Accordions, testimonials, and gallery card titles are skipped so their
+  own animation stays in control. Gallery labels sit in a pinned track,
+  so a scroll reveal would leave later cards invisible.
 */
 function setupContentReveal() {
   if (prefersReducedMotion) {
@@ -503,7 +505,8 @@ function setupContentReveal() {
     const items = gsap.utils.toArray(selector).filter(
       (item) =>
         !item.closest(".Accordion") &&
-        !item.closest(".Client-Testimonials")
+        !item.closest(".Client-Testimonials") &&
+        !item.closest(".Gallery-card")
     );
 
     if (!items.length) {
@@ -734,7 +737,7 @@ function setupTestimonials() {
 
   const clampIndex = gsap.utils.clamp(0, slides.length - 1);
   const formatIndex = (value) => String(value).padStart(2, "0");
-  const slideDuration = 30;
+  const slideDuration = 10;
   const progressBar = section.querySelector("[data-testimonial-progress]");
   const progressBars = progressBar ? [progressBar] : [];
   let index = 0;
