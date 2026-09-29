@@ -1653,7 +1653,7 @@ section.Process>.Display h2 {
   }
 
   .Hero-fold {
-    padding: var(--spacing-48) var(--page-inline) var(--spacing-32);
+    padding: var(--spacing-48) var(--page-inline) var(--spacing-48);
   }
 
   .Hero-reveal {
