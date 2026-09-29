@@ -735,9 +735,8 @@ function setupTestimonials() {
   const clampIndex = gsap.utils.clamp(0, slides.length - 1);
   const formatIndex = (value) => String(value).padStart(2, "0");
   const slideDuration = 30;
-  const progressBars = slides.map((slide) =>
-    slide.querySelector("[data-testimonial-progress]")
-  );
+  const progressBar = section.querySelector("[data-testimonial-progress]");
+  const progressBars = progressBar ? [progressBar] : [];
   let index = 0;
   let minX = 0;
   let transition;

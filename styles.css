@@ -767,7 +767,7 @@ video.Image-1-1 {
   align-items: center;
   gap: var(--spacing-60);
   overflow: hidden;
-  padding-bottom:var(--spacing-24);
+  padding-bottom: var(--spacing-24);
   background: var(--bg-variant);
 }
 
@@ -776,7 +776,7 @@ video.Image-1-1 {
   width: 100%;
   max-width: 1320px;
   align-items: center;
-  justify-content:center ;
+  justify-content: center;
   padding: var(--spacing-80) var(--page-inline) var(--spacing-48);
 }
 
@@ -1065,6 +1065,7 @@ video.Image-1-1 {
 }
 
 .Testimonial_tracker {
+  position: relative;
   overflow: hidden;
   width: 100%;
   cursor: grab;
@@ -1230,7 +1231,7 @@ section.Process>.Display h2 {
   border-bottom: var(--stroke-0) solid var(--stroke-light-gray);
 }
 
-.Process-whole-wrap > .Process > img {
+.Process-whole-wrap>.Process>img {
   width: 60px;
   height: 60px;
   flex: none;
@@ -1411,7 +1412,7 @@ section.Process>.Display h2 {
     pointer-events: none;
   }
 
-  .Nav > .is-docked-title {
+  .Nav>.is-docked-title {
     flex: 1 1 auto;
     min-width: 0;
     width: auto;
@@ -1425,7 +1426,7 @@ section.Process>.Display h2 {
     background: var(--bg-variant);
   }
 
-  .Nav--on-image > .is-docked-title {
+  .Nav--on-image>.is-docked-title {
     color: var(--text-dark);
   }
 
@@ -1506,7 +1507,7 @@ section.Process>.Display h2 {
 
   .Value-proportion {
     gap: var(--spacing-48);
-    padding-bottom:var(--spacing-24);
+    padding-bottom: var(--spacing-24);
   }
 
   .Value-Content {
@@ -1573,8 +1574,26 @@ section.Process>.Display h2 {
     padding: var(--spacing-80) var(--page-inline);
   }
 
+  .Client-title-wrap {
+    flex-wrap: wrap;
+    gap: var(--spacing-32);
+  }
+
+  .Client-title-wrap h2 {
+    max-width: none;
+  }
+
+  .Arrow-button-container {
+    display: none;
+  }
+
   .Testimonial-progress {
     display: flex;
+    position: absolute;
+    left: 0;
+    top: calc(406px + var(--spacing-32));
+    z-index: 1;
+    pointer-events: none;
   }
 
   .Testimonial_track {
@@ -1583,7 +1602,7 @@ section.Process>.Display h2 {
 
   .Testimonial {
     flex-wrap: wrap;
-    gap: var(--spacing-32);
+    gap: calc((var(--spacing-32) * 2) + var(--spacing-8) + var(--stroke-3));
     overflow: visible;
   }
 
@@ -1600,6 +1619,7 @@ section.Process>.Display h2 {
     flex: none;
     justify-content: flex-start;
     gap: var(--spacing-36);
+    padding: var(--spacing-24) var(--spacing-0);
   }
 
   section.Process {
@@ -1651,7 +1671,7 @@ section.Process>.Display h2 {
     padding-left: var(--spacing-16);
   }
 
-  .Nav > .is-docked-title {
+  .Nav>.is-docked-title {
     margin-left: calc(var(--page-inline) - var(--spacing-16));
   }
 
@@ -1776,7 +1796,11 @@ section.Process>.Display h2 {
     flex-direction: column;
     flex-wrap: nowrap;
     overflow: visible;
-    gap: var(--spacing-4);
+    gap: calc((var(--spacing-4) * 2) + var(--spacing-8) + var(--stroke-3));
+  }
+
+  .Testimonial-progress {
+    top: calc(228px + var(--spacing-4));
   }
 
   .Testimonial-img {
@@ -2206,7 +2230,7 @@ section.Process>.Display h2 {
     padding-right: var(--spacing-0);
     padding-left: var(--spacing-0);
   }
- 
+
   .Work-Tracker-Container {
     padding: var(--spacing-0);
   }
@@ -2983,6 +3007,10 @@ section.Process>.Display h2 {
     min-height: 0;
     overflow: auto;
     gap: var(--spacing-24);
+  }
+
+  .Button-container.is-start {
+    justify-content: center;
   }
 
   .Enquiry-Whatsapp {
