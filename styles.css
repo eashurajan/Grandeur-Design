@@ -1733,7 +1733,7 @@ section.Process>.Display h2 {
 
   .Work {
     gap: var(--spacing-24);
-    padding-top: var(--spacing-80);
+    padding-top: var(--spacing-32);
   }
 
   .Details {
@@ -1764,7 +1764,7 @@ section.Process>.Display h2 {
   }
 
   .Client-Testimonials {
-    gap: var(--spacing-24);
+    gap: var(--spacing-40);
     padding: var(--spacing-48) var(--page-inline) var(--spacing-24);
   }
 
