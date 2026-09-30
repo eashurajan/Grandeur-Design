@@ -309,11 +309,16 @@ document.addEventListener("DOMContentLoaded", pinProjectPageToTop);
   a paused first frame instead.
 */
 function setupHeroVideo() {
-  const video = document.querySelector(".Hero-visual video.Image-1-1");
+  const visual = document.querySelector(".Hero-visual");
+  const video = visual && visual.querySelector("video.Image-1-1");
 
   if (!video) {
     return;
   }
+
+  const revealVideo = () => {
+    visual.classList.add("is-video-ready");
+  };
 
   if (prefersReducedMotion) {
     video.pause();
@@ -360,12 +365,20 @@ function setupHeroVideo() {
     playVideo();
   });
 
-  video.addEventListener("canplay", playVideo);
+  video.addEventListener("canplay", () => {
+    playVideo();
+    revealVideo();
+  });
+  video.addEventListener("playing", revealVideo);
   document.addEventListener("visibilitychange", () => {
     if (document.visibilityState === "visible") {
       playVideo();
     }
   });
+
+  if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
+    revealVideo();
+  }
 
   playVideo();
 }
@@ -379,7 +392,8 @@ setupHeroVideo();
 function setupHeroFold() {
   const hero = document.querySelector(".Hero-Banner");
   const visual = hero && hero.querySelector(".Hero-visual");
-  const image = visual && visual.querySelector(".Image-1-1");
+  const layers = visual ? visual.querySelectorAll(".Image-1-1") : [];
+  const image = layers[0];
   const nextFold = document.querySelector(".Value-proportion");
 
   if (!hero || !visual || !image || !nextFold || prefersReducedMotion) {
@@ -403,10 +417,10 @@ function setupHeroFold() {
     anticipatePin: 1,
   });
 
-  /* Video stays centered; only the extra height travels on scroll */
-  gsap.set(image, { x: 0, xPercent: 0 });
+  /* Poster and video stay centered; only the extra height travels on scroll */
+  gsap.set(layers, { x: 0, xPercent: 0 });
   gsap.fromTo(
-    image,
+    layers,
     {
       y: 0,
     },

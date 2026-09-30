@@ -703,10 +703,20 @@ a.Menu {
   will-change: transform;
 }
 
+.Hero-poster {
+  z-index: 0;
+}
+
 video.Image-1-1 {
+  z-index: 0;
   display: block;
   background: transparent;
   pointer-events: none;
+  opacity: 0;
+}
+
+.Hero-visual.is-video-ready video.Image-1-1 {
+  opacity: 1;
 }
 
 .Hero-fold {
@@ -763,9 +773,11 @@ video.Image-1-1 {
   position: relative;
   z-index: 25;
   display: flex;
+  height: 100vh;
   flex-direction: column;
   align-items: center;
-  gap: var(--spacing-60);
+  justify-content: space-between;
+  gap: auto;
   overflow: hidden;
   padding-bottom: var(--spacing-24);
   background: var(--bg-variant);
@@ -1502,8 +1514,9 @@ section.Process>.Display h2 {
   }
 
   .Value-proportion {
-    gap: var(--spacing-48);
+    gap: var(--spacing-60);
     padding-bottom: var(--spacing-24);
+    height: 100%;
   }
 
   .Value-Content {
@@ -1695,6 +1708,7 @@ section.Process>.Display h2 {
   .Value-proportion {
     gap: var(--spacing-48);
     padding-bottom: var(--spacing-36);
+    height: 100%;
   }
 
   .Value-Content {
@@ -1873,8 +1887,14 @@ section.Process>.Display h2 {
   display: flex;
   width: 100%;
   max-width: var(--content-max);
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
+}
+
+.about-button-container {
+  padding-top: var(--spacing-16);
+  display: flex;
+  width: 100%;
 }
 
 .A-Leftcontent-wrap {
@@ -1896,10 +1916,16 @@ section.Process>.Display h2 {
 }
 
 .A-Rightcontent-wrap .Para {
+  display: flex;
+  flex-direction: column;
   width: 100%;
   min-width: 420px;
   max-width: 520px;
   color: var(--text-dark-sub);
+  gap: var(--spacing-24);
+}
+.hightlight-text{
+  font-weight: 600;
 }
 
 .Our-Team {

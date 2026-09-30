@@ -14,6 +14,7 @@
   <link rel="stylesheet" href="DS/radius.css">
   <link rel="stylesheet" href="DS/typography.css">
   <link rel="stylesheet" href="styles.css">
+  <link rel="preload" as="image" href="assets/images/home/hero-image.jpg">
   <script src="DS/typography-mode.js"></script>
 </head>
 
@@ -52,8 +53,10 @@
       <main>
         <section class="Hero-Banner" id="home">
           <div class="Hero-visual">
-            <video class="Image-1-1" id="imagesection" autoplay muted loop playsinline preload="auto"
-              aria-label="Architecture and interior spaces">
+            <img class="Image-1-1 Hero-poster" src="assets/images/home/hero-image.jpg" alt="" fetchpriority="high"
+              decoding="async" aria-hidden="true">
+            <video class="Image-1-1" id="imagesection" poster="assets/images/home/hero-image.jpg" autoplay muted loop
+              playsinline preload="auto" aria-label="Architecture and interior spaces">
               <source src="assets/Video/hero-video.mp4" type="video/mp4">
             </video>
           </div>
@@ -67,13 +70,6 @@
             </div>
             <div class="Hero-reveal">
               <div class="Hero-content">
-                <div class="Para">
-                  <p class="type-paragraph">No need to coordinate with multiple teams. From homes and commercial spaces
-                    to
-                    specialized projects, we take care of everything from start to finish, while staying within your
-                    budget
-                    and plan.</p>
-                </div>
                 <a class="Button Button--variant type-button" href="#works">
                   View Our Works
                   <span class="Icons" aria-hidden="true">
@@ -101,32 +97,34 @@
                 <h2 class="type-display-large">Build around your needs</h2>
               </div>
               <div class="Para">
-                <p class="type-paragraph">With 15+ years of experience across different types of projects, we’ve seen
-                  how easily unclear costs, changing timelines, and poor coordination can turn a design project into a
-                  stressful experience. We respect value of time, money, and vision. From the initial plan to design,
-                  budgeting, and execution, we communicate clearly about timelines and works to avoid unexpected
-                  expenses and delays.</p>
+                <p class="type-paragraph">From homes and commercial spaces
+                  to
+                  specialized projects, we take care of everything from start to finish, while staying within your
+                  budget
+                  and plan.</p>
                 <p class="type-paragraph">We manage your project end to end, coordinating with manufacturers,
                   constructors and
                   vendors to bring the approved design to life smoothly and efficiently. From the first plan to the
                   final
                   handover, we take care of the details so you can move into your space with confidence.</p>
               </div>
-              <a class="Button Button--primary type-button" href="about.html">
-                Learn More About Us
-                <span class="Icons" aria-hidden="true">
-                  <svg class="Icon-go-black" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17.8855 16.8872L18.9942 6.33872L8.44568 5.23003M18.9942 6.33872L5.00555 17.6665"
-                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                  <svg class="Icon-go-black" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17.8855 16.8872L18.9942 6.33872L8.44568 5.23003M18.9942 6.33872L5.00555 17.6665"
-                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                  </svg>
-                </span>
-              </a>
+              <div class="about-button-container">
+                <a class="Button Button--primary type-button" href="about.html">
+                  Learn More About Us
+                  <span class="Icons" aria-hidden="true">
+                    <svg class="Icon-go-black" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path d="M17.8855 16.8872L18.9942 6.33872L8.44568 5.23003M18.9942 6.33872L5.00555 17.6665"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                    <svg class="Icon-go-black" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                      xmlns="http://www.w3.org/2000/svg">
+                      <path d="M17.8855 16.8872L18.9942 6.33872L8.44568 5.23003M18.9942 6.33872L5.00555 17.6665"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                  </span>
+                </a>
+              </div>
             </div>
           </div>
           <div class="Buildingplan">
