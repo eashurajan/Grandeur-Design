@@ -1390,10 +1390,6 @@ section.Process>.Display h2 {
 @media (max-width: 1024px) {
   :root {
     --page-gutter: var(--spacing-80);
-    --font-size-48: 42px;
-    --font-size-32: 28px;
-    --line-height-56: 48px;
-    --line-height-48: 36px;
   }
 
   .Nav {

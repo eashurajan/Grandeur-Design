@@ -28,27 +28,6 @@ const menuButton = document.querySelector(".Menu-Button");
 const siteNav = document.querySelector(".Menu-list");
 
 /*
-  CSS typography tokens change with a data attribute on <html>.
-  Desktop: wider than 1024px. Tablet: 601–1024px. Mobile: 600px and below.
-*/
-function setTypographyMode() {
-  const width = window.innerWidth;
-
-  /* Tablet type scale from 601px to 1024px */
-  if (width <= 1024) {
-    document.documentElement.setAttribute("data-typography-mode", "tablet");
-  } else {
-    /* Desktop type scale above 1024px */
-    document.documentElement.setAttribute("data-typography-mode", "desktop");
-  }
-
-  /* Mobile type scale at 600px and below (overrides tablet) */
-  if (width <= 600) {
-    document.documentElement.setAttribute("data-typography-mode", "mobile");
-  }
-}
-
-/*
   These two functions are empty at first. setupMenuOverlay() later
   replaces them with the real open/close animation.
 */

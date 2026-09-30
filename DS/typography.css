@@ -20,7 +20,8 @@
 
   /* Line heights */
   --line-height-56: 56px;
-  --line-height-48: 48px; 
+  --line-height-48: 48px;
+  --line-height-40: 40px;
   --line-height-32: 32px;
   --line-height-28: 28px;
   --line-height-24: 24px;
@@ -29,10 +30,18 @@
 
 [data-typography-mode="tablet"],
 [data-typography-mode="mobile"] {
-  --font-size-48: 42px;
   --font-size-32: 28px;
-  --line-height-56: 48px;
   --line-height-48: 36px;
+}
+
+[data-typography-mode="tablet"] {
+  --font-size-48: 42px;
+  --line-height-56: 48px;
+}
+
+[data-typography-mode="mobile"] {
+  --font-size-48: 32px;
+  --line-height-56: 40px;
 }
 
 .type-display-large {
