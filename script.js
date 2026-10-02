@@ -1479,7 +1479,8 @@ function setupMenuOverlay() {
   Builds the 3-step enquiry form overlay in JavaScript.
   Step 1: name, phone, email
   Step 2: service + project type
-  Step 3: budget + short brief
+  Step 3: budget and project brief
+  Submit sends the enquiry to /api/submit-lead. That function writes the row.
   "Enquiry Now", "Get a Quote", and "Start Your Project" all open this.
 */
 function setupEnquiryOverlay() {
@@ -1524,6 +1525,10 @@ function setupEnquiryOverlay() {
         <div class="Stepper-03"><span class="type-caption">03</span></div>
       </div>
       <form class="Enquiry-Form" aria-labelledby="enquiry-title">
+        <div class="Enquiry-honeypot" aria-hidden="true">
+          <label for="enquiry-website">Website</label>
+          <input id="enquiry-website" type="text" name="website" tabindex="-1" autocomplete="off">
+        </div>
         <div class="Enquiry-Title">
           <h2 class="type-heading" id="enquiry-title">Enquiry Form</h2>
           <p class="type-caption">Building, renovating, or reimagining your home? Share your requirements and let’s bring your vision to life.</p>
@@ -1581,6 +1586,7 @@ function setupEnquiryOverlay() {
           <label class="Project-question type-anchor-large-prominent" for="enquiry-brief">Tell us a little about your project ?</label>
           <textarea class="Project-Brief type-caption" id="enquiry-brief" name="brief" rows="2" placeholder="Write here"></textarea>
         </div>
+        <p class="Enquiry-status type-caption" id="enquiry-status" role="status" hidden></p>
         <div class="Button-container is-start">
           <button class="Button Button--variant Enquiry-Back type-button" type="button">Back</button>
           <button class="Button Button--muted Enquiry-Next type-button" type="button" disabled>Next</button>
@@ -1612,9 +1618,12 @@ function setupEnquiryOverlay() {
   const closeBtn = overlay.querySelector(".Cancel-button");
   const lineFills = [...overlay.querySelectorAll(".Stepper-line-fill")];
   const whatsapp = overlay.querySelector(".Enquiry-Whatsapp");
+  const status = overlay.querySelector(".Enquiry-status");
   let step = 1;
   let openTween;
   let enquiryOpener = null;
+  let submitting = false;
+  let submitGeneration = 0;
 
   /* Fill the 01—02—03 line as the user moves between form steps. */
   function animateStepper(toStep) {
@@ -1821,6 +1830,11 @@ function setupEnquiryOverlay() {
 
   /* Enable Next and switch it from grey to dark when the current step is complete. */
   function syncNext() {
+    if (submitting) {
+      next.disabled = true;
+      return;
+    }
+
     const valid = isStepValid();
     next.disabled = !valid;
     next.classList.toggle("Button--muted", !valid);
@@ -1891,6 +1905,11 @@ function setupEnquiryOverlay() {
         overlay.style.transform = "";
       }
 
+      submitGeneration += 1;
+      submitting = false;
+      status.hidden = true;
+      status.textContent = "";
+      status.classList.remove("is-error");
       setStep(1, false);
       clearErrorTimers();
       form.reset();
@@ -1929,6 +1948,77 @@ function setupEnquiryOverlay() {
     }
   });
 
+  function showStatus(message, isError) {
+    status.hidden = !message;
+    status.textContent = message || "";
+    status.classList.toggle("is-error", Boolean(isError));
+  }
+
+  function selectedValues(name) {
+    return [...form.querySelectorAll(`input[name="${name}"]:checked`)].map((input) => input.value);
+  }
+
+  function enquiryPayload() {
+    const budget = form.querySelector('input[name="budget"]:checked');
+
+    return {
+      name: form.elements.name.value.trim(),
+      phone: form.elements.phone.value.trim(),
+      email: form.elements.email.value.trim(),
+      service: selectedValues("service").join(", "),
+      project: selectedValues("project").join(", "),
+      projectOther: form.elements.projectOther.value.trim(),
+      budget: budget ? budget.value : "",
+      brief: form.elements.brief.value.trim(),
+      website: form.elements.website.value,
+    };
+  }
+
+  async function submitEnquiry() {
+    if (submitting || !isStepValid()) {
+      return;
+    }
+
+    const generation = submitGeneration;
+    submitting = true;
+    next.disabled = true;
+    next.textContent = "Sending...";
+    showStatus("", false);
+
+    try {
+      const response = await fetch("/api/submit-lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(enquiryPayload()),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (generation !== submitGeneration) {
+        return;
+      }
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Could not send your enquiry. Please try again.");
+      }
+
+      showStatus("Thank you. We have received your enquiry.", false);
+      window.setTimeout(() => {
+        if (generation === submitGeneration) {
+          closeEnquiry();
+        }
+      }, 900);
+    } catch (error) {
+      if (generation !== submitGeneration) {
+        return;
+      }
+
+      submitting = false;
+      showStatus(error.message || "Could not send your enquiry. Please try again.", true);
+      next.textContent = "Submit";
+      syncNext();
+    }
+  }
+
   next.addEventListener("click", () => {
     if (step === 1) {
       clearErrorTimers();
@@ -1953,7 +2043,7 @@ function setupEnquiryOverlay() {
       return;
     }
 
-    closeEnquiry();
+    submitEnquiry();
   });
 
   form.addEventListener("beforeinput", (event) => {
@@ -1984,6 +2074,10 @@ function setupEnquiryOverlay() {
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+
+    if (step === 3) {
+      submitEnquiry();
+    }
   });
 
   document.querySelectorAll("a, button").forEach((trigger) => {

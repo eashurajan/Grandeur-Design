@@ -2751,11 +2751,33 @@ section.Process>.Display h2 {
 }
 
 .Enquiry-Form {
+  position: relative;
   display: flex;
   width: 100%;
   flex: none;
   flex-direction: column;
   gap: var(--spacing-48);
+}
+
+/* Off-screen honeypot. People never see it. Bots that fill every field do. */
+.Enquiry-honeypot {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.Enquiry-status {
+  color: var(--text-dark-sub);
+}
+
+.Enquiry-status.is-error {
+  color: var(--text-error);
 }
 
 .Enquiry-Title {
