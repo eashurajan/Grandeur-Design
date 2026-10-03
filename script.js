@@ -1675,6 +1675,8 @@ function setupEnquiryOverlay() {
   const enquiryTitle = overlay.querySelector(".Enquiry-Title");
   let thankTimeline;
   let thankAnimation;
+  let thankGeneration = 0;
+  let thankHold = 0;
   const closeBtn = overlay.querySelector(".Cancel-button");
   const lineFills = [...overlay.querySelectorAll(".Stepper-line-fill")];
   const whatsapp = overlay.querySelector(".Enquiry-Whatsapp");
@@ -2038,6 +2040,9 @@ function setupEnquiryOverlay() {
   function closeEnquiry() {
     const shouldClear = leadSubmitted;
 
+    thankGeneration += 1;
+    window.clearTimeout(thankHold);
+
     if (thankTimeline) {
       thankTimeline.kill();
     }
@@ -2122,6 +2127,9 @@ function setupEnquiryOverlay() {
   }
 
   function resetThankYou() {
+    thankGeneration += 1;
+    window.clearTimeout(thankHold);
+
     if (thankTimeline) {
       thankTimeline.kill();
       thankTimeline = null;
@@ -2146,46 +2154,121 @@ function setupEnquiryOverlay() {
     }
   }
 
+  /* Play the success icon once. Resolves when that play finishes. */
   function playSuccessIcon() {
     successIcon.hidden = false;
-    loadLottiePlayer().then((lottie) => {
-      if (!next.classList.contains("is-thanks") || thankAnimation) {
+
+    return loadLottiePlayer().then((lottie) => {
+      if (!next.classList.contains("is-thanks")) {
         return;
       }
 
-      thankAnimation = lottie.loadAnimation({
-        container: successIcon,
-        renderer: "svg",
-        loop: !prefersReducedMotion,
-        autoplay: !prefersReducedMotion,
-        path: "assets/Lottie/Thank-you-success.json",
-      });
+      return new Promise((resolve) => {
+        let settled = false;
+        let safety = 0;
+        const finish = () => {
+          if (settled) {
+            return;
+          }
+          settled = true;
+          window.clearTimeout(safety);
+          resolve();
+        };
+        const begin = () => {
+          if (!thankAnimation) {
+            finish();
+            return;
+          }
 
-      if (prefersReducedMotion) {
-        thankAnimation.addEventListener("DOMLoaded", () => {
-          thankAnimation.goToAndStop(thankAnimation.totalFrames - 1, true);
+          const frames = thankAnimation.totalFrames || 120;
+          const rate = thankAnimation.frameRate || 60;
+          safety = window.setTimeout(finish, (frames / rate) * 1000 + 200);
+
+          if (prefersReducedMotion) {
+            thankAnimation.goToAndStop(frames - 1, true);
+            finish();
+            return;
+          }
+
+          thankAnimation.loop = false;
+          thankAnimation.play();
+        };
+
+        thankAnimation = lottie.loadAnimation({
+          container: successIcon,
+          renderer: "svg",
+          loop: false,
+          autoplay: false,
+          path: "assets/Lottie/Thank-you-success.json",
         });
-      }
+        thankAnimation.addEventListener("complete", finish);
+        thankAnimation.addEventListener("data_failed", finish);
+
+        if (thankAnimation.isLoaded) {
+          begin();
+        } else {
+          thankAnimation.addEventListener("DOMLoaded", begin);
+        }
+      });
     }).catch(() => {
       successIcon.hidden = true;
     });
   }
 
+  /* Lift the full-width thank-you from the bottom and reveal the note. */
+  function riseThankYou() {
+    gsap.set(next, { width: buttons.getBoundingClientRect().width });
+
+    const first = next.getBoundingClientRect();
+
+    gsap.set(next, { clearProps: "width" });
+    overlay.classList.add("is-submitted");
+    thanks.hidden = false;
+
+    const last = next.getBoundingClientRect();
+
+    gsap.set(next, {
+      x: first.left - last.left,
+      y: first.top - last.top,
+      backgroundColor: "#101010",
+      color: "#ffffff",
+    });
+    gsap.set(thanks, { y: 16, autoAlpha: 0 });
+    gsap.set([stepper, enquiryTitle, ...steps, whatsapp, status], { autoAlpha: 0 });
+
+    thankTimeline = gsap.timeline();
+    thankTimeline.to(next, {
+      x: 0,
+      y: 0,
+      backgroundColor: "rgba(16, 16, 16, 0)",
+      color: "#101010",
+      duration: 0.85,
+      ease: "power3.inOut",
+    }, 0);
+    thankTimeline.to(thanks, {
+      y: 0,
+      autoAlpha: 1,
+      duration: 0.6,
+      ease: "power3.out",
+    }, 0.28);
+  }
+
   /* Frame 1: the submit control fills the row. Frame 2: it rises and the note appears. */
   function playThankYou() {
+    const generation = ++thankGeneration;
+
     nextLabel.textContent = "Thank you";
     next.classList.add("is-thanks", "Button--primary");
     next.classList.remove("Button--muted");
     next.disabled = true;
-    playSuccessIcon();
 
     if (prefersReducedMotion || !window.gsap) {
       overlay.classList.add("is-submitted");
       thanks.hidden = false;
+      playSuccessIcon();
       return;
     }
 
-    const rowWidth = buttons.getBoundingClientRect().width;
     const backBox = back.getBoundingClientRect();
     const rowBox = buttons.getBoundingClientRect();
 
@@ -2197,7 +2280,19 @@ function setupEnquiryOverlay() {
       yPercent: -50,
     });
 
-    thankTimeline = gsap.timeline();
+    thankTimeline = gsap.timeline({
+      onComplete: () => {
+        gsap.set(next, { width: "100%" });
+        playSuccessIcon();
+        thankHold = window.setTimeout(() => {
+          if (generation !== thankGeneration || !overlay.classList.contains("is-open")) {
+            return;
+          }
+
+          riseThankYou();
+        }, 1500);
+      },
+    });
     thankTimeline.to(back, {
       scale: 0,
       autoAlpha: 0,
@@ -2208,48 +2303,10 @@ function setupEnquiryOverlay() {
     thankTimeline.fromTo(next, {
       width: next.offsetWidth,
     }, {
-      width: rowWidth,
+      width: rowBox.width,
       duration: 0.55,
       ease: "power3.inOut",
     }, 0);
-    thankTimeline.to([stepper, enquiryTitle, ...steps, whatsapp, status], {
-      autoAlpha: 0,
-      duration: 0.3,
-      ease: "power2.out",
-    }, 0.42);
-    thankTimeline.add(() => {
-      const first = next.getBoundingClientRect();
-
-      gsap.set(next, { clearProps: "width" });
-      overlay.classList.add("is-submitted");
-      thanks.hidden = false;
-
-      const last = next.getBoundingClientRect();
-
-      gsap.set(next, {
-        x: first.left - last.left,
-        y: first.top - last.top,
-        backgroundColor: "#101010",
-        color: "#ffffff",
-      });
-      gsap.set(thanks, { y: 16, autoAlpha: 0 });
-
-      thankTimeline = gsap.timeline();
-      thankTimeline.to(next, {
-        x: 0,
-        y: 0,
-        backgroundColor: "rgba(16, 16, 16, 0)",
-        color: "#101010",
-        duration: 0.85,
-        ease: "power3.inOut",
-      }, 0);
-      thankTimeline.to(thanks, {
-        y: 0,
-        autoAlpha: 1,
-        duration: 0.6,
-        ease: "power3.out",
-      }, 0.28);
-    });
   }
 
   function showStatus(message, isError) {
