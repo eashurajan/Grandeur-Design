@@ -11,21 +11,15 @@
     GOOGLE_SHEET_ID
 
   The row is appended to the first tab of the spreadsheet.
-  If that tab is empty, the function writes this header row first:
-    Timestamp | Name | Phone | Email | Service | Project | Project other | Budget | Project brief
+  If the header row is missing or still uses the old columns, it is rewritten as:
+    S.NO | Date | Name | Phone no | Email | Service interest | Project Type | Budget | Project brief | lead qualify score
+
+  Project Type "other" is not its own column. The visitor's typed text is
+  written in Project Type. The score comes from the budget in lead-options.js.
 */
 
-const HEADERS = [
-  "Timestamp",
-  "Name",
-  "Phone",
-  "Email",
-  "Service",
-  "Project",
-  "Project other",
-  "Budget",
-  "Project brief",
-];
+const leadForm = require("../lead-options");
+const HEADERS = leadForm.headers;
 
 const { google } = require("googleapis");
 
@@ -64,6 +58,19 @@ function letterCount(value) {
   return (value.match(/[A-Za-z]/g) || []).length;
 }
 
+/* Sheet date is the studio's local day: 03/10/2026. */
+function formatLeadDate(date) {
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Kolkata",
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  }).formatToParts(date);
+
+  const pick = (type) => parts.find((part) => part.type === type).value;
+  return `${pick("day")}/${pick("month")}/${pick("year")}`;
+}
+
 function validate(body) {
   const name = text(body.name, MAX_NAME);
   const phone = String(body.phone == null ? "" : body.phone).replace(/\D/g, "");
@@ -87,15 +94,25 @@ function validate(body) {
     return { error: "Enter a valid email address." };
   }
 
-  if (!service) {
+  if (!leadForm.isService(service)) {
     return { error: "Choose a service." };
   }
 
-  if (!project && !projectOther) {
+  if (!leadForm.isProject(project)) {
     return { error: "Choose a project type." };
   }
 
-  if (!budget) {
+  let projectType = project;
+
+  if (leadForm.projectAllowsText(project)) {
+    if (!projectOther) {
+      return { error: "Describe your project type." };
+    }
+
+    projectType = projectOther;
+  }
+
+  if (!leadForm.isBudget(budget)) {
     return { error: "Choose a budget range." };
   }
 
@@ -104,7 +121,17 @@ function validate(body) {
   }
 
   return {
-    lead: { name, phone, email, service, project, projectOther, budget, brief, website },
+    lead: {
+      name,
+      phone,
+      email,
+      service,
+      projectType,
+      budget,
+      brief,
+      score: leadForm.scoreForBudget(budget),
+      website,
+    },
   };
 }
 
@@ -122,37 +149,52 @@ async function appendLead(lead) {
     fields: "sheets.properties.title",
   });
   const title = meta.data.sheets?.[0]?.properties?.title || "Sheet1";
-  const range = `'${title.replace(/'/g, "''")}'!A:I`;
+  const sheet = title.replace(/'/g, "''");
+  const headerRange = `'${sheet}'!A1:J1`;
   const header = await sheets.spreadsheets.values.get({
     spreadsheetId,
-    range: `'${title.replace(/'/g, "''")}'!A1:I1`,
+    range: headerRange,
   });
+  const currentHeader = header.data.values?.[0] || [];
+  const headerMatches =
+    currentHeader.length === HEADERS.length &&
+    HEADERS.every((label, index) => currentHeader[index] === label);
 
-  if (!header.data.values || !header.data.values.length) {
+  if (!headerMatches) {
     await sheets.spreadsheets.values.update({
       spreadsheetId,
-      range: `'${title.replace(/'/g, "''")}'!A1:I1`,
+      range: headerRange,
       valueInputOption: "RAW",
       requestBody: { values: [HEADERS] },
     });
   }
 
+  const serials = await sheets.spreadsheets.values.get({
+    spreadsheetId,
+    range: `'${sheet}'!A2:A`,
+  });
+  const nextSerial = (serials.data.values || []).reduce((highest, row) => {
+    const serial = Number(row[0]);
+    return Number.isInteger(serial) && serial > highest ? serial : highest;
+  }, 0) + 1;
+
   await sheets.spreadsheets.values.append({
     spreadsheetId,
-    range,
+    range: `'${sheet}'!A:J`,
     valueInputOption: "RAW",
     insertDataOption: "INSERT_ROWS",
     requestBody: {
       values: [[
-        new Date().toISOString(),
+        nextSerial,
+        formatLeadDate(new Date()),
         lead.name,
         lead.phone,
         lead.email,
         lead.service,
-        lead.project,
-        lead.projectOther,
+        lead.projectType,
         lead.budget,
         lead.brief,
+        lead.score,
       ]],
     },
   });
