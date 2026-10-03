@@ -1639,8 +1639,12 @@ function setupEnquiryOverlay() {
         <p class="Enquiry-status type-caption" id="enquiry-status" role="status" hidden></p>
         <div class="Button-container is-start">
           <button class="Button Button--variant Enquiry-Back type-button" type="button">Back</button>
-          <button class="Button Button--muted Enquiry-Next type-button" type="button" disabled>Next</button>
+          <button class="Button Button--muted Enquiry-Next type-button" type="button" disabled>
+            <span class="Enquiry-success-icon" hidden aria-hidden="true"></span>
+            <span class="Enquiry-Next-label">Next</span>
+          </button>
         </div>
+        <p class="Enquiry-thanks type-caption" role="status" hidden>Your form has been submitted successfully. We’ll be in touch shortly.</p>
       </form>
       <div class="Enquiry-Whatsapp">
         <div class="Enquiry-or" aria-hidden="true">
@@ -1665,6 +1669,12 @@ function setupEnquiryOverlay() {
   const buttons = overlay.querySelector(".Button-container");
   const back = overlay.querySelector(".Enquiry-Back");
   const next = overlay.querySelector(".Enquiry-Next");
+  const nextLabel = overlay.querySelector(".Enquiry-Next-label");
+  const successIcon = overlay.querySelector(".Enquiry-success-icon");
+  const thanks = overlay.querySelector(".Enquiry-thanks");
+  const enquiryTitle = overlay.querySelector(".Enquiry-Title");
+  let thankTimeline;
+  let thankAnimation;
   const closeBtn = overlay.querySelector(".Cancel-button");
   const lineFills = [...overlay.querySelectorAll(".Stepper-line-fill")];
   const whatsapp = overlay.querySelector(".Enquiry-Whatsapp");
@@ -1908,6 +1918,7 @@ function setupEnquiryOverlay() {
 
   function resetEnquiryFields() {
     draftReady = false;
+    resetThankYou();
     form.reset();
     clearErrorTimers();
     ["name", "phone", "email"].forEach(clearFieldError);
@@ -1973,7 +1984,10 @@ function setupEnquiryOverlay() {
     stepper.classList.add("is-step-" + step);
     buttons.classList.toggle("is-start", step === 1);
     whatsapp.hidden = step !== 1;
-    next.textContent = step === 3 ? "Submit" : "Next";
+    nextLabel.textContent = step === 3 ? "Submit" : "Next";
+    if (step === 3) {
+      loadLottiePlayer().catch(() => {});
+    }
     animateStepper(step);
     syncNext();
 
@@ -2024,6 +2038,10 @@ function setupEnquiryOverlay() {
   function closeEnquiry() {
     const shouldClear = leadSubmitted;
 
+    if (thankTimeline) {
+      thankTimeline.kill();
+    }
+
     function finish() {
       overlay.classList.remove("is-open");
       overlay.setAttribute("aria-hidden", "true");
@@ -2045,7 +2063,7 @@ function setupEnquiryOverlay() {
       if (shouldClear) {
         resetEnquiryFields();
       } else {
-        next.textContent = step === 3 ? "Submit" : "Next";
+        nextLabel.textContent = step === 3 ? "Submit" : "Next";
         syncNext();
         saveDraft();
       }
@@ -2082,6 +2100,158 @@ function setupEnquiryOverlay() {
     }
   });
 
+  function loadLottiePlayer() {
+    if (window.lottie) {
+      return Promise.resolve(window.lottie);
+    }
+
+    if (loadLottiePlayer.promise) {
+      return loadLottiePlayer.promise;
+    }
+
+    loadLottiePlayer.promise = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/lottie-web@5.12.2/build/player/lottie.min.js";
+      script.async = true;
+      script.onload = () => resolve(window.lottie);
+      script.onerror = () => reject(new Error("Could not load the success animation."));
+      document.head.appendChild(script);
+    });
+
+    return loadLottiePlayer.promise;
+  }
+
+  function resetThankYou() {
+    if (thankTimeline) {
+      thankTimeline.kill();
+      thankTimeline = null;
+    }
+
+    if (thankAnimation) {
+      thankAnimation.destroy();
+      thankAnimation = null;
+    }
+
+    overlay.classList.remove("is-submitted");
+    buttons.classList.remove("is-expanding");
+    next.classList.remove("is-thanks");
+    successIcon.hidden = true;
+    successIcon.replaceChildren();
+    thanks.hidden = true;
+
+    if (window.gsap) {
+      gsap.set([next, back, thanks, stepper, enquiryTitle, whatsapp, status, ...steps], {
+        clearProps: "all",
+      });
+    }
+  }
+
+  function playSuccessIcon() {
+    successIcon.hidden = false;
+    loadLottiePlayer().then((lottie) => {
+      if (!next.classList.contains("is-thanks") || thankAnimation) {
+        return;
+      }
+
+      thankAnimation = lottie.loadAnimation({
+        container: successIcon,
+        renderer: "svg",
+        loop: !prefersReducedMotion,
+        autoplay: !prefersReducedMotion,
+        path: "assets/Lottie/Thank-you-success.json",
+      });
+
+      if (prefersReducedMotion) {
+        thankAnimation.addEventListener("DOMLoaded", () => {
+          thankAnimation.goToAndStop(thankAnimation.totalFrames - 1, true);
+        });
+      }
+    }).catch(() => {
+      successIcon.hidden = true;
+    });
+  }
+
+  /* Frame 1: the submit control fills the row. Frame 2: it rises and the note appears. */
+  function playThankYou() {
+    nextLabel.textContent = "Thank you";
+    next.classList.add("is-thanks", "Button--primary");
+    next.classList.remove("Button--muted");
+    next.disabled = true;
+    playSuccessIcon();
+
+    if (prefersReducedMotion || !window.gsap) {
+      overlay.classList.add("is-submitted");
+      thanks.hidden = false;
+      return;
+    }
+
+    const rowWidth = buttons.getBoundingClientRect().width;
+    const backBox = back.getBoundingClientRect();
+    const rowBox = buttons.getBoundingClientRect();
+
+    buttons.classList.add("is-expanding");
+    gsap.set(back, {
+      position: "absolute",
+      left: backBox.left - rowBox.left,
+      top: "50%",
+      yPercent: -50,
+    });
+
+    thankTimeline = gsap.timeline();
+    thankTimeline.to(back, {
+      scale: 0,
+      autoAlpha: 0,
+      duration: 0.4,
+      ease: "power2.in",
+      transformOrigin: "center center",
+    }, 0);
+    thankTimeline.fromTo(next, {
+      width: next.offsetWidth,
+    }, {
+      width: rowWidth,
+      duration: 0.55,
+      ease: "power3.inOut",
+    }, 0);
+    thankTimeline.to([stepper, enquiryTitle, ...steps, whatsapp, status], {
+      autoAlpha: 0,
+      duration: 0.3,
+      ease: "power2.out",
+    }, 0.42);
+    thankTimeline.add(() => {
+      const first = next.getBoundingClientRect();
+
+      gsap.set(next, { clearProps: "width" });
+      overlay.classList.add("is-submitted");
+      thanks.hidden = false;
+
+      const last = next.getBoundingClientRect();
+
+      gsap.set(next, {
+        x: first.left - last.left,
+        y: first.top - last.top,
+        backgroundColor: "#101010",
+        color: "#ffffff",
+      });
+      gsap.set(thanks, { y: 16, autoAlpha: 0 });
+
+      thankTimeline = gsap.timeline();
+      thankTimeline.to(next, {
+        x: 0,
+        y: 0,
+        backgroundColor: "rgba(16, 16, 16, 0)",
+        color: "#101010",
+        duration: 0.85,
+        ease: "power3.inOut",
+      }, 0);
+      thankTimeline.to(thanks, {
+        y: 0,
+        autoAlpha: 1,
+        duration: 0.6,
+        ease: "power3.out",
+      }, 0.28);
+    });
+  }
+
   function showStatus(message, isError) {
     status.hidden = !message;
     status.textContent = message || "";
@@ -2112,7 +2282,7 @@ function setupEnquiryOverlay() {
     const generation = submitGeneration;
     submitting = true;
     next.disabled = true;
-    next.textContent = "Sending...";
+    nextLabel.textContent = "Sending...";
     showStatus("", false);
 
     try {
@@ -2139,12 +2309,7 @@ function setupEnquiryOverlay() {
         return;
       }
 
-      showStatus("Thank you. We have received your enquiry.", false);
-      window.setTimeout(() => {
-        if (generation === submitGeneration) {
-          closeEnquiry();
-        }
-      }, 900);
+      playThankYou();
     } catch (error) {
       if (generation !== submitGeneration) {
         return;
@@ -2152,7 +2317,7 @@ function setupEnquiryOverlay() {
 
       submitting = false;
       showStatus(error.message || "Could not send your enquiry. Please try again.", true);
-      next.textContent = "Submit";
+      nextLabel.textContent = "Submit";
       syncNext();
     }
   }

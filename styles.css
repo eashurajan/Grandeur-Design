@@ -2979,6 +2979,84 @@ section.Process>.Display h2 {
   min-width: 160px;
 }
 
+.Enquiry-success-icon {
+  display: none;
+  width: 24px;
+  height: 24px;
+  flex: none;
+  color: inherit;
+}
+
+.Enquiry-Next.is-thanks .Enquiry-success-icon {
+  display: block;
+}
+
+.Enquiry-success-icon svg {
+  display: block;
+  width: 24px;
+  height: 24px;
+  overflow: visible;
+}
+
+.Enquiry-success-icon svg [fill]:not([fill="none"]) {
+  fill: currentColor !important;
+}
+
+.Enquiry-success-icon svg [stroke]:not([stroke="none"]) {
+  stroke: currentColor !important;
+}
+
+.Enquiry-thanks {
+  width: min(100%, 265px);
+  margin-inline: auto;
+  color: var(--text-dark-sub);
+  text-align: center;
+}
+
+.Enquiry-thanks[hidden] {
+  display: none;
+}
+
+.Button-container.is-expanding {
+  position: relative;
+  justify-content: flex-end;
+}
+
+.Enquiry-Next.is-thanks:disabled {
+  opacity: 1;
+  cursor: default;
+}
+
+.Overlay.is-submitted .Stepper,
+.Overlay.is-submitted .Enquiry-Title,
+.Overlay.is-submitted .Enquiry-Step,
+.Overlay.is-submitted .Enquiry-Whatsapp,
+.Overlay.is-submitted .Enquiry-status,
+.Overlay.is-submitted .Enquiry-Back {
+  display: none;
+}
+
+.Overlay.is-submitted .Enquiry-Form {
+  flex: none;
+  width: 100%;
+  min-height: 385px;
+  justify-content: center;
+  align-items: center;
+  gap: var(--spacing-12);
+}
+
+.Overlay.is-submitted .Button-container {
+  width: 100%;
+  justify-content: center;
+}
+
+.Overlay.is-submitted .Enquiry-Next.is-thanks {
+  width: 100%;
+  flex: 1 1 auto;
+  background: transparent;
+  color: var(--text-dark);
+}
+
 .Enquiry-Whatsapp {
   display: flex;
   width: 100%;
