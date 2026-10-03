@@ -1519,31 +1519,17 @@ function escapeEnquiryText(value) {
     .replace(/"/g, "&quot;");
 }
 
-function enquirySelectMarkup(name, placeholder, options, labelId) {
-  const listId = `enquiry-${name}-list`;
-  const items = options.map((option, index) => {
-    const color = /^#[0-9A-Fa-f]{6}$/.test(option.color) ? option.color : "#F0F2F4";
-    return `<li class="Enquiry-option" role="option" id="enquiry-${name}-opt-${index}" data-value="${escapeEnquiryText(option.value)}" aria-selected="false" style="--option-bg:${color}">${escapeEnquiryText(option.label)}</li>`;
+function enquiryChoicesMarkup(name, type, options, icon) {
+  return options.map((option) => {
+    return `<label class="Option type-caption"><input type="${type}" name="${name}" value="${escapeEnquiryText(option.value)}">${icon}${escapeEnquiryText(option.label)}</label>`;
   }).join("");
-
-  return `
-    <div class="Enquiry-select" data-select="${name}" data-placeholder="${escapeEnquiryText(placeholder)}">
-      <button class="Enquiry-select-trigger type-caption" type="button" aria-haspopup="listbox" aria-expanded="false" aria-controls="${listId}" aria-labelledby="${labelId}">
-        <span class="Enquiry-select-value is-placeholder">${escapeEnquiryText(placeholder)}</span>
-        <span class="Enquiry-select-chevron" aria-hidden="true"></span>
-      </button>
-      <ul class="Enquiry-select-menu" id="${listId}" role="listbox" aria-labelledby="${labelId}" hidden>
-        ${items}
-      </ul>
-      <input type="hidden" name="${name}" value="">
-    </div>`;
 }
 
 /*
   Builds the 3-step enquiry form overlay in JavaScript.
   Step 1: name, phone, email
-  Step 2: service interest + project type dropdowns
-  Step 3: budget dropdown and project brief
+  Step 2: service + project type
+  Step 3: budget and project brief
   Submit sends the enquiry to /api/submit-lead. That function writes the row.
   "Enquiry Now", "Get a Quote", and "Start Your Project" all open this.
 */
@@ -1567,6 +1553,23 @@ function setupEnquiryOverlay() {
   overlay.setAttribute("aria-modal", "true");
   overlay.setAttribute("aria-labelledby", "enquiry-title");
   overlay.setAttribute("aria-hidden", "true");
+  const checkboxOn = `
+    <span class="Option-Actions">
+      <span class="Option-Actions-mark"></span>
+      <svg class="Option-Actions-on" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <path d="M4 4H16V16H4V4Z" fill="currentColor"/>
+        <path d="M6.59105 9.87428L8.94791 12.2305L13.409 7.76948" stroke="currentColor"/>
+      </svg>
+    </span>`;
+  const radioOn = `
+    <span class="Option-Actions Option-Actions--radio">
+      <span class="Option-Actions-mark"></span>
+      <svg class="Option-Actions-on" width="20" height="20" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+        <circle cx="10" cy="10" r="5.5" stroke="currentColor" fill="none"/>
+        <circle cx="10" cy="10" r="3.35938" fill="currentColor"/>
+      </svg>
+    </span>`;
+  const projectChoices = LEAD_FORM.projectTypes.filter((option) => !option.allowsText);
 
   overlay.innerHTML = `
     <button class="Cancel-button Component-1" type="button" aria-label="Close enquiry">
@@ -1609,21 +1612,26 @@ function setupEnquiryOverlay() {
         <div class="Enquiry-Step Questions-Container" data-step="2">
           <div class="S-frame">
             <div class="service-question type-anchor-large-prominent" id="enquiry-service-q">What service are you interested in?</div>
-            ${enquirySelectMarkup("service", "Select a service", LEAD_FORM.services, "enquiry-service-q")}
+            <div class="service-option" role="group" aria-labelledby="enquiry-service-q">
+              ${enquiryChoicesMarkup("service", "checkbox", LEAD_FORM.services, checkboxOn)}
+            </div>
           </div>
           <div class="P-frame">
             <div class="Project-question type-anchor-large-prominent" id="enquiry-project-q">What’s your project type?</div>
-            ${enquirySelectMarkup("project", "Select a project type", LEAD_FORM.projectTypes, "enquiry-project-q")}
-            <div class="Enquiry-other" hidden>
-              <label class="sr-only" for="enquiry-other">Other project type</label>
-              <input class="Input type-caption" id="enquiry-other" type="text" name="projectOther" placeholder="Describe your project type" maxlength="200" autocomplete="off" aria-label="Other project type">
+            <div class="Project-option-container" role="group" aria-labelledby="enquiry-project-q">
+              <div class="p-option">
+                ${enquiryChoicesMarkup("project", "checkbox", projectChoices, checkboxOn)}
+              </div>
+              <input class="Input type-caption" id="enquiry-other" type="text" name="projectOther" placeholder="Others" maxlength="200" autocomplete="off" aria-label="Other project type">
             </div>
           </div>
         </div>
         <div class="Enquiry-Step Project-container" data-step="3">
           <div class="B-Frame">
             <div class="Budget-question type-anchor-large-prominent" id="enquiry-budget-q">Choose your budget range</div>
-            ${enquirySelectMarkup("budget", "Select a budget range", LEAD_FORM.budgets, "enquiry-budget-q")}
+            <div class="B-option" role="group" aria-labelledby="enquiry-budget-q">
+              ${enquiryChoicesMarkup("budget", "radio", LEAD_FORM.budgets, radioOn)}
+            </div>
           </div>
           <label class="Project-question type-anchor-large-prominent" for="enquiry-brief">Tell us a little about your project ?</label>
           <textarea class="Project-Brief type-caption" id="enquiry-brief" name="brief" rows="2" placeholder="Write here"></textarea>
@@ -1852,54 +1860,30 @@ function setupEnquiryOverlay() {
     return !message;
   }
 
-  const selects = [...overlay.querySelectorAll(".Enquiry-select")];
   let leadSubmitted = false;
   let draftReady = false;
 
-  function selectByName(name) {
-    return selects.find((select) => select.dataset.select === name);
+  function checkedValues(name) {
+    return [...form.querySelectorAll(`input[name="${name}"]:checked`)].map((input) => input.value);
   }
 
-  function closeSelectMenus(except) {
-    selects.forEach((select) => {
-      if (select !== except && select.closeMenu) {
-        select.closeMenu();
-      }
-    });
-  }
-
-  /* Paint the closed dropdown from an allowed value. Anything else stays blank. */
-  function setSelectValue(select, value) {
-    const hidden = select.querySelector('input[type="hidden"]');
-    const valueEl = select.querySelector(".Enquiry-select-value");
-    const trigger = select.querySelector(".Enquiry-select-trigger");
-    const items = [...select.querySelectorAll(".Enquiry-option")];
-    const match = items.find((item) => item.dataset.value === value) || null;
-
-    hidden.value = match ? match.dataset.value : "";
-    items.forEach((item) => {
-      item.setAttribute("aria-selected", item === match ? "true" : "false");
-    });
-
-    if (!match) {
-      valueEl.textContent = select.dataset.placeholder;
-      valueEl.classList.add("is-placeholder");
-      trigger.style.removeProperty("--select-bg");
-      return;
+  function draftList(value) {
+    if (Array.isArray(value)) {
+      return value.filter((item) => typeof item === "string");
     }
 
-    valueEl.textContent = match.textContent;
-    valueEl.classList.remove("is-placeholder");
-    trigger.style.setProperty("--select-bg", match.style.getPropertyValue("--option-bg").trim());
+    if (typeof value === "string" && value.trim()) {
+      return value.split(",").map((item) => item.trim()).filter(Boolean);
+    }
+
+    return [];
   }
 
-  function syncProjectOther() {
-    const show = LEAD_FORM.projectAllowsText(form.elements.project.value);
-    overlay.querySelector(".Enquiry-other").hidden = !show;
-
-    if (!show) {
-      form.elements.projectOther.value = "";
-    }
+  function restoreChecks(name, value, isAllowed) {
+    const selected = new Set(draftList(value).filter(isAllowed));
+    form.querySelectorAll(`input[name="${name}"]`).forEach((input) => {
+      input.checked = selected.has(input.value);
+    });
   }
 
   function saveDraft() {
@@ -1907,135 +1891,24 @@ function setupEnquiryOverlay() {
       return;
     }
 
+    const budget = form.querySelector('input[name="budget"]:checked');
+
     writeEnquiryDraft({
       step,
       name: form.elements.name.value,
       phone: form.elements.phone.value,
       email: form.elements.email.value,
-      service: form.elements.service.value,
-      project: form.elements.project.value,
+      service: checkedValues("service"),
+      project: checkedValues("project"),
       projectOther: form.elements.projectOther.value,
-      budget: form.elements.budget.value,
+      budget: budget ? budget.value : "",
       brief: form.elements.brief.value,
-    });
-  }
-
-  function onSelectChange(select) {
-    if (select.dataset.select === "project") {
-      syncProjectOther();
-    }
-
-    syncNext();
-    saveDraft();
-  }
-
-  function bindSelect(select) {
-    const trigger = select.querySelector(".Enquiry-select-trigger");
-    const menu = select.querySelector(".Enquiry-select-menu");
-    const items = [...select.querySelectorAll(".Enquiry-option")];
-    let activeIndex = -1;
-
-    function setActive(index) {
-      if (!items.length) {
-        return;
-      }
-
-      activeIndex = (index + items.length) % items.length;
-      items.forEach((item, itemIndex) => {
-        item.classList.toggle("is-active", itemIndex === activeIndex);
-      });
-      menu.setAttribute("aria-activedescendant", items[activeIndex].id);
-    }
-
-    function closeMenu() {
-      menu.hidden = true;
-      trigger.setAttribute("aria-expanded", "false");
-      select.classList.remove("is-open");
-      menu.removeAttribute("aria-activedescendant");
-      items.forEach((item) => item.classList.remove("is-active"));
-      activeIndex = -1;
-    }
-
-    function openMenu() {
-      closeSelectMenus(select);
-      menu.hidden = false;
-      trigger.setAttribute("aria-expanded", "true");
-      select.classList.add("is-open");
-      const selected = items.findIndex((item) => item.getAttribute("aria-selected") === "true");
-      setActive(selected >= 0 ? selected : 0);
-    }
-
-    function choose(index) {
-      const item = items[index];
-
-      if (!item) {
-        return;
-      }
-
-      setSelectValue(select, item.dataset.value);
-      closeMenu();
-      onSelectChange(select);
-      trigger.focus();
-    }
-
-    select.closeMenu = closeMenu;
-
-    trigger.addEventListener("click", () => {
-      if (select.classList.contains("is-open")) {
-        closeMenu();
-        return;
-      }
-
-      openMenu();
-    });
-
-    trigger.addEventListener("keydown", (event) => {
-      if (event.key === "ArrowDown" || event.key === "ArrowUp") {
-        event.preventDefault();
-
-        if (!select.classList.contains("is-open")) {
-          openMenu();
-          return;
-        }
-
-        setActive(activeIndex + (event.key === "ArrowDown" ? 1 : -1));
-        return;
-      }
-
-      if (event.key === "Enter" || event.key === " ") {
-        event.preventDefault();
-
-        if (!select.classList.contains("is-open")) {
-          openMenu();
-          return;
-        }
-
-        choose(activeIndex);
-        return;
-      }
-
-      if (event.key === "Escape" && select.classList.contains("is-open")) {
-        event.preventDefault();
-        event.stopPropagation();
-        closeMenu();
-      }
-    });
-
-    items.forEach((item, index) => {
-      item.addEventListener("click", () => choose(index));
-      item.addEventListener("mouseenter", () => {
-        if (!menu.hidden) {
-          setActive(index);
-        }
-      });
     });
   }
 
   function resetEnquiryFields() {
     draftReady = false;
     form.reset();
-    selects.forEach((select) => setSelectValue(select, ""));
-    syncProjectOther();
     clearErrorTimers();
     ["name", "phone", "email"].forEach(clearFieldError);
     clearEnquiryDraft();
@@ -2054,11 +1927,10 @@ function setupEnquiryOverlay() {
     form.elements.name.value = typeof draft.name === "string" ? draft.name : "";
     form.elements.phone.value = typeof draft.phone === "string" ? draft.phone : "";
     form.elements.email.value = typeof draft.email === "string" ? draft.email : "";
-    setSelectValue(selectByName("service"), LEAD_FORM.isService(draft.service) ? draft.service : "");
-    setSelectValue(selectByName("project"), LEAD_FORM.isProject(draft.project) ? draft.project : "");
+    restoreChecks("service", draft.service, LEAD_FORM.isService);
+    restoreChecks("project", draft.project, (value) => LEAD_FORM.isProject(value) && !LEAD_FORM.projectAllowsText(value));
     form.elements.projectOther.value = typeof draft.projectOther === "string" ? draft.projectOther : "";
-    syncProjectOther();
-    setSelectValue(selectByName("budget"), LEAD_FORM.isBudget(draft.budget) ? draft.budget : "");
+    restoreChecks("budget", draft.budget, LEAD_FORM.isBudget);
     form.elements.brief.value = typeof draft.brief === "string" ? draft.brief : "";
     setStep(draft.step === 2 || draft.step === 3 ? draft.step : 1, false);
   }
@@ -2070,12 +1942,15 @@ function setupEnquiryOverlay() {
     }
 
     if (step === 2) {
-      const project = form.elements.project.value;
-      const otherOk = !LEAD_FORM.projectAllowsText(project) || form.elements.projectOther.value.trim().length > 0;
-      return LEAD_FORM.isService(form.elements.service.value) && LEAD_FORM.isProject(project) && otherOk;
+      const services = checkedValues("service");
+      const projects = checkedValues("project");
+      const serviceOk = services.length > 0 && services.every(LEAD_FORM.isService);
+      const projectOk = projects.length > 0 && projects.every((value) => LEAD_FORM.isProject(value) && !LEAD_FORM.projectAllowsText(value));
+      return serviceOk && (projectOk || form.elements.projectOther.value.trim().length > 0);
     }
 
-    return LEAD_FORM.isBudget(form.elements.budget.value) && form.elements.brief.value.trim().length > 0;
+    const budget = form.querySelector('input[name="budget"]:checked');
+    return Boolean(budget && LEAD_FORM.isBudget(budget.value) && form.elements.brief.value.trim());
   }
 
   /* Enable Next and switch it from grey to dark when the current step is complete. */
@@ -2101,8 +1976,6 @@ function setupEnquiryOverlay() {
     next.textContent = step === 3 ? "Submit" : "Next";
     animateStepper(step);
     syncNext();
-
-    closeSelectMenus();
 
     steps.forEach((panel) => {
       const active = Number(panel.dataset.step) === step;
@@ -2150,7 +2023,6 @@ function setupEnquiryOverlay() {
   /* Close the form. A submitted enquiry is cleared. An abandoned one is kept. */
   function closeEnquiry() {
     const shouldClear = leadSubmitted;
-    closeSelectMenus();
 
     function finish() {
       overlay.classList.remove("is-open");
@@ -2217,16 +2089,16 @@ function setupEnquiryOverlay() {
   }
 
   function enquiryPayload() {
-    const project = form.elements.project.value;
+    const budget = form.querySelector('input[name="budget"]:checked');
 
     return {
       name: form.elements.name.value.trim(),
       phone: form.elements.phone.value.trim(),
       email: form.elements.email.value.trim(),
-      service: form.elements.service.value,
-      project,
-      projectOther: LEAD_FORM.projectAllowsText(project) ? form.elements.projectOther.value.trim() : "",
-      budget: form.elements.budget.value,
+      service: checkedValues("service").join(", "),
+      project: checkedValues("project").join(", "),
+      projectOther: form.elements.projectOther.value.trim(),
+      budget: budget ? budget.value : "",
       brief: form.elements.brief.value.trim(),
       website: form.elements.website.value,
     };
@@ -2350,12 +2222,6 @@ function setupEnquiryOverlay() {
     }
   });
 
-  selects.forEach(bindSelect);
-  document.addEventListener("click", (event) => {
-    if (!event.target.closest(".Enquiry-select")) {
-      closeSelectMenus();
-    }
-  });
   restoreDraft();
   draftReady = true;
 

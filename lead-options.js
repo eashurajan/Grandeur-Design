@@ -1,12 +1,12 @@
 /*
-  Single source for enquiry dropdowns and the lead spreadsheet.
+  Single source for the enquiry choices and the lead spreadsheet.
 
   The form (script.js) and /api/submit-lead both read this file.
-  Change labels, colours, or scores here only.
+  Change labels, sheet colours, or scores here only.
 
-  Project Type "other" is the one free-text exception. The words the
-  visitor types are stored in the Project Type column. There is no
-  separate "Project other" column.
+  Colours are for the Google Sheet column dropdowns, not the website form.
+  Project Type "other" is the free-text field on the form. Those words are
+  stored in the Project Type column. The sheet dropdown also lists "Other".
 
   lead qualify score is assigned from the budget range:
     3L-10L → 50, 10L-30L → 70, 30L-90L → 90, 1C-5C → 100
@@ -79,6 +79,10 @@
     projectAllowsText(value) {
       const item = find(projectTypes, value);
       return Boolean(item && item.allowsText);
+    },
+    /* Value shown inside the Google Sheet dropdown for this choice. */
+    sheetValue(option) {
+      return option.allowsText ? option.label : option.value;
     },
     scoreForBudget(value) {
       const item = find(budgets, value);

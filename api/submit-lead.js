@@ -16,6 +16,9 @@
 
   Project Type "other" is not its own column. The visitor's typed text is
   written in Project Type. The score comes from the budget in lead-options.js.
+
+  Service interest, Project Type, and Budget are dropdowns in the sheet.
+  Each option has its own background colour, also defined in lead-options.js.
 */
 
 const leadForm = require("../lead-options");
@@ -58,6 +61,24 @@ function letterCount(value) {
   return (value.match(/[A-Za-z]/g) || []).length;
 }
 
+function choiceParts(value) {
+  return text(value, MAX_CHOICE)
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+}
+
+function hexToColor(hex) {
+  const safe = /^#[0-9A-Fa-f]{6}$/.test(hex) ? hex : "#F0F2F4";
+  const number = parseInt(safe.slice(1), 16);
+
+  return {
+    red: ((number >> 16) & 255) / 255,
+    green: ((number >> 8) & 255) / 255,
+    blue: (number & 255) / 255,
+  };
+}
+
 /* Sheet date is the studio's local day: 03/10/2026. */
 function formatLeadDate(date) {
   const parts = new Intl.DateTimeFormat("en-GB", {
@@ -94,22 +115,40 @@ function validate(body) {
     return { error: "Enter a valid email address." };
   }
 
-  if (!leadForm.isService(service)) {
+  const services = choiceParts(service);
+
+  if (!services.length || services.some((part) => !leadForm.isService(part))) {
     return { error: "Choose a service." };
   }
 
-  if (!leadForm.isProject(project)) {
+  const projects = choiceParts(project);
+  const listedProjects = [];
+  let otherSelected = false;
+
+  for (const part of projects) {
+    if (!leadForm.isProject(part)) {
+      return { error: "Choose a project type." };
+    }
+
+    if (leadForm.projectAllowsText(part)) {
+      otherSelected = true;
+    } else {
+      listedProjects.push(part);
+    }
+  }
+
+  if (otherSelected && !projectOther) {
+    return { error: "Describe your project type." };
+  }
+
+  if (!listedProjects.length && !projectOther) {
     return { error: "Choose a project type." };
   }
 
-  let projectType = project;
+  let projectType = listedProjects.join(", ");
 
-  if (leadForm.projectAllowsText(project)) {
-    if (!projectOther) {
-      return { error: "Describe your project type." };
-    }
-
-    projectType = projectOther;
+  if (projectOther) {
+    projectType = projectType ? `${projectType}, ${projectOther}` : projectOther;
   }
 
   if (!leadForm.isBudget(budget)) {
@@ -125,7 +164,7 @@ function validate(body) {
       name,
       phone,
       email,
-      service,
+      service: services.join(", "),
       projectType,
       budget,
       brief,
@@ -133,6 +172,108 @@ function validate(body) {
       website,
     },
   };
+}
+
+function dropdownColumns() {
+  return [
+    { header: "Service interest", options: leadForm.services, strict: true },
+    {
+      header: "Project Type",
+      options: leadForm.projectTypes.map((option) => ({
+        value: leadForm.sheetValue(option),
+        color: option.color,
+      })),
+      strict: false,
+    },
+    { header: "Budget", options: leadForm.budgets, strict: true },
+  ];
+}
+
+function isDropdownRange(range, sheetId, column) {
+  const rangeSheet = range && range.sheetId == null ? sheetId : range && range.sheetId;
+
+  return Boolean(range)
+    && rangeSheet === sheetId
+    && range.startColumnIndex === column
+    && range.endColumnIndex === column + 1;
+}
+
+/* Dropdown lists and background colours live on the sheet columns. */
+async function applySheetDropdowns(sheets, spreadsheetId, sheetId, formats) {
+  const columns = dropdownColumns();
+  const requests = [];
+  const owned = [];
+
+  (formats || []).forEach((rule, index) => {
+    const ranges = rule.ranges || [];
+    const matches = ranges.length > 0 && ranges.every((range) => {
+      return columns.some((column) => isDropdownRange(range, sheetId, HEADERS.indexOf(column.header)));
+    });
+
+    if (matches) {
+      owned.push(index);
+    }
+  });
+
+  owned.sort((left, right) => right - left).forEach((index) => {
+    requests.push({
+      deleteConditionalFormatRule: { sheetId, index },
+    });
+  });
+
+  columns.forEach((column) => {
+    const columnIndex = HEADERS.indexOf(column.header);
+    const range = {
+      sheetId,
+      startRowIndex: 1,
+      startColumnIndex: columnIndex,
+      endColumnIndex: columnIndex + 1,
+    };
+
+    requests.push({
+      setDataValidation: {
+        range,
+        rule: {
+          condition: {
+            type: "ONE_OF_LIST",
+            values: column.options.map((option) => ({ userEnteredValue: option.value })),
+          },
+          showCustomUi: true,
+          strict: column.strict,
+          inputMessage: "Choose one of the listed options.",
+        },
+      },
+    });
+
+    column.options.forEach((option) => {
+      requests.push({
+        addConditionalFormatRule: {
+          index: 0,
+          rule: {
+            ranges: [range],
+            booleanRule: {
+              condition: {
+                type: "TEXT_EQ",
+                values: [{ userEnteredValue: option.value }],
+              },
+              format: {
+                backgroundColorStyle: { rgbColor: hexToColor(option.color) },
+              },
+            },
+          },
+        },
+      });
+    });
+  });
+
+  if (!requests.length) {
+    return;
+  }
+
+  await sheets.spreadsheets.batchUpdate({
+    spreadsheetId,
+    requestBody: { requests },
+  });
 }
 
 async function appendLead(lead) {
@@ -146,9 +287,11 @@ async function appendLead(lead) {
   const spreadsheetId = envValue("GOOGLE_SHEET_ID");
   const meta = await sheets.spreadsheets.get({
     spreadsheetId,
-    fields: "sheets.properties.title",
+    fields: "sheets.properties(sheetId,title),sheets.conditionalFormats",
   });
-  const title = meta.data.sheets?.[0]?.properties?.title || "Sheet1";
+  const firstSheet = meta.data.sheets?.[0];
+  const title = firstSheet?.properties?.title || "Sheet1";
+  const sheetId = firstSheet?.properties?.sheetId ?? 0;
   const sheet = title.replace(/'/g, "''");
   const headerRange = `'${sheet}'!A1:J1`;
   const header = await sheets.spreadsheets.values.get({
@@ -168,6 +311,8 @@ async function appendLead(lead) {
       requestBody: { values: [HEADERS] },
     });
   }
+
+  await applySheetDropdowns(sheets, spreadsheetId, sheetId, firstSheet?.conditionalFormats);
 
   const serials = await sheets.spreadsheets.values.get({
     spreadsheetId,
