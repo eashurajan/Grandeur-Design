@@ -1677,6 +1677,7 @@ function setupEnquiryOverlay() {
   let thankAnimation;
   let thankGeneration = 0;
   let thankHold = 0;
+  let iconShouldPlay = false;
   const closeBtn = overlay.querySelector(".Cancel-button");
   const lineFills = [...overlay.querySelectorAll(".Stepper-line-fill")];
   const whatsapp = overlay.querySelector(".Enquiry-Whatsapp");
@@ -2128,6 +2129,7 @@ function setupEnquiryOverlay() {
 
   function resetThankYou() {
     thankGeneration += 1;
+    iconShouldPlay = false;
     window.clearTimeout(thankHold);
 
     if (thankTimeline) {
@@ -2156,8 +2158,6 @@ function setupEnquiryOverlay() {
 
   /* Play the success icon once. Resolves when that play finishes. */
   function playSuccessIcon() {
-    successIcon.hidden = false;
-
     return loadLottiePlayer().then((lottie) => {
       if (!next.classList.contains("is-thanks")) {
         return;
@@ -2185,13 +2185,18 @@ function setupEnquiryOverlay() {
           safety = window.setTimeout(finish, (frames / rate) * 1000 + 200);
 
           if (prefersReducedMotion) {
+            successIcon.hidden = false;
             thankAnimation.goToAndStop(frames - 1, true);
             finish();
             return;
           }
 
           thankAnimation.loop = false;
-          thankAnimation.play();
+          thankAnimation.goToAndStop(0, true);
+          if (iconShouldPlay) {
+            successIcon.hidden = false;
+            thankAnimation.play();
+          }
         };
 
         thankAnimation = lottie.loadAnimation({
@@ -2215,6 +2220,29 @@ function setupEnquiryOverlay() {
     });
   }
 
+  /* Start the icon if it is already loaded. Otherwise it starts as soon as it loads. */
+  function startSuccessIcon() {
+    iconShouldPlay = true;
+    successIcon.hidden = false;
+
+    if (thankAnimation && thankAnimation.isLoaded) {
+      thankAnimation.loop = false;
+      thankAnimation.play();
+    }
+  }
+
+  /* Drop the black fill in place, then let the caller move the button. */
+  function fadeThankYouBackground(done) {
+    thankTimeline = gsap.timeline({ onComplete: done });
+    thankTimeline.to(next, {
+      backgroundColor: "rgba(16, 16, 16, 0)",
+      color: "#101010",
+      "--success-check": "#f3f0ec",
+      duration: 0.4,
+      ease: "power2.inOut",
+    });
+  }
+
   /* Lift the full-width thank-you from the bottom and reveal the note. */
   function riseThankYou() {
     gsap.set(next, { width: buttons.getBoundingClientRect().width });
@@ -2230,9 +2258,6 @@ function setupEnquiryOverlay() {
     gsap.set(next, {
       x: first.left - last.left,
       y: first.top - last.top,
-      backgroundColor: "#101010",
-      color: "#ffffff",
-      "--success-check": "#101010",
     });
     gsap.set(thanks, { y: 16, autoAlpha: 0 });
     gsap.set([stepper, enquiryTitle, ...steps, whatsapp, status], { autoAlpha: 0 });
@@ -2241,9 +2266,6 @@ function setupEnquiryOverlay() {
     thankTimeline.to(next, {
       x: 0,
       y: 0,
-      backgroundColor: "rgba(16, 16, 16, 0)",
-      color: "#101010",
-      "--success-check": "#f3f0ec",
       duration: 0.85,
       ease: "power3.inOut",
     }, 0);
@@ -2267,9 +2289,13 @@ function setupEnquiryOverlay() {
     if (prefersReducedMotion || !window.gsap) {
       overlay.classList.add("is-submitted");
       thanks.hidden = false;
+      iconShouldPlay = true;
       playSuccessIcon();
       return;
     }
+
+    iconShouldPlay = false;
+    playSuccessIcon();
 
     const backBox = back.getBoundingClientRect();
     const rowBox = buttons.getBoundingClientRect();
@@ -2285,13 +2311,19 @@ function setupEnquiryOverlay() {
     thankTimeline = gsap.timeline({
       onComplete: () => {
         gsap.set(next, { width: "100%" });
-        playSuccessIcon();
+        startSuccessIcon();
         thankHold = window.setTimeout(() => {
           if (generation !== thankGeneration || !overlay.classList.contains("is-open")) {
             return;
           }
 
-          riseThankYou();
+          fadeThankYouBackground(() => {
+            if (generation !== thankGeneration || !overlay.classList.contains("is-open")) {
+              return;
+            }
+
+            riseThankYou();
+          });
         }, 1500);
       },
     });
