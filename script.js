@@ -2279,7 +2279,7 @@ function setupEnquiryOverlay() {
     }, 0.28);
   }
 
-  /* Close the thank-you screen 3 seconds after it has settled. */
+  /* Close the thank-you screen 1.5 seconds after it has settled. */
   function scheduleThankYouClose() {
     const generation = thankGeneration;
 
@@ -2290,7 +2290,7 @@ function setupEnquiryOverlay() {
       }
 
       closeEnquiry();
-    }, 3000);
+    }, 1500);
   }
 
   /* Frame 1: the submit control fills the row. Frame 2: it rises and the note appears. */
