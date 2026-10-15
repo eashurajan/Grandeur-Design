@@ -2998,12 +2998,16 @@ section.Process>.Display h2 {
   overflow: visible;
 }
 
+.Enquiry-Next.is-thanks {
+  --success-check: var(--bg-dark);
+}
+
 .Enquiry-success-icon svg [fill]:not([fill="none"]) {
   fill: currentColor !important;
 }
 
 .Enquiry-success-icon svg [stroke]:not([stroke="none"]) {
-  stroke: currentColor !important;
+  stroke: var(--success-check) !important;
 }
 
 .Enquiry-thanks {
@@ -3055,6 +3059,7 @@ section.Process>.Display h2 {
   flex: 1 1 auto;
   background: transparent;
   color: var(--text-dark);
+  --success-check: var(--bg-variant);
 }
 
 .Enquiry-Whatsapp {

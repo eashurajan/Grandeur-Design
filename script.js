@@ -2232,6 +2232,7 @@ function setupEnquiryOverlay() {
       y: first.top - last.top,
       backgroundColor: "#101010",
       color: "#ffffff",
+      "--success-check": "#101010",
     });
     gsap.set(thanks, { y: 16, autoAlpha: 0 });
     gsap.set([stepper, enquiryTitle, ...steps, whatsapp, status], { autoAlpha: 0 });
@@ -2242,6 +2243,7 @@ function setupEnquiryOverlay() {
       y: 0,
       backgroundColor: "rgba(16, 16, 16, 0)",
       color: "#101010",
+      "--success-check": "#f3f0ec",
       duration: 0.85,
       ease: "power3.inOut",
     }, 0);
