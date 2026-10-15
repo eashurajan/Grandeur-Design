@@ -2262,7 +2262,9 @@ function setupEnquiryOverlay() {
     gsap.set(thanks, { y: 16, autoAlpha: 0 });
     gsap.set([stepper, enquiryTitle, ...steps, whatsapp, status], { autoAlpha: 0 });
 
-    thankTimeline = gsap.timeline();
+    thankTimeline = gsap.timeline({
+      onComplete: scheduleThankYouClose,
+    });
     thankTimeline.to(next, {
       x: 0,
       y: 0,
@@ -2275,6 +2277,20 @@ function setupEnquiryOverlay() {
       duration: 0.6,
       ease: "power3.out",
     }, 0.28);
+  }
+
+  /* Close the thank-you screen 3 seconds after it has settled. */
+  function scheduleThankYouClose() {
+    const generation = thankGeneration;
+
+    window.clearTimeout(thankHold);
+    thankHold = window.setTimeout(() => {
+      if (generation !== thankGeneration || !overlay.classList.contains("is-open")) {
+        return;
+      }
+
+      closeEnquiry();
+    }, 3000);
   }
 
   /* Frame 1: the submit control fills the row. Frame 2: it rises and the note appears. */
@@ -2291,6 +2307,7 @@ function setupEnquiryOverlay() {
       thanks.hidden = false;
       iconShouldPlay = true;
       playSuccessIcon();
+      scheduleThankYouClose();
       return;
     }
 
